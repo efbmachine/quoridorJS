@@ -8,17 +8,47 @@ import {posToArr, arrToPos} from '../helper';
 export default class Board extends React.Component{
     constructor(props){
       super(props)
+      const margin = 70
+      const squareSize = 34
+
       this.state={
-        walls:props.walls
+        walls:props.walls || []
 
       }
     }
-    renderSquare(i,j) {
-        return <Square position={[i,j]} key={'sq'+(j)+((i-1)*9)}/>;
+
+    handleClick(i,j){
+        let position = arrToPos([j,i])
+        let walls = this.state.walls.slice();
+        let dir = prompt('H or V','V')
+        if(dir != null && dir.toUpperCase()=='V'){
+            position += dir
+            console.log(position)
+            walls.push(position)
+            this.setState({walls:walls})
+        }
+        else if(dir != null && dir.toUpperCase()=='H'){
+            position += dir
+            console.log(position)
+            walls.push(position)
+            this.setState({walls:walls})
+
+        }
+        else {
+            alert('enter a valid value')
+        }
     }
+    renderSquare(i,j) {
+        return <Square position={[i,j]}
+                        onClick={()=>this.handleClick(i,j)}
+                        key={'sq'+(j)+((i-1)*9)}/>;
+    }
+
     render(){
         const status = 'Next player: White';
         let row = []
+
+        //Creates the board (9*9)
         for(let i=0;i<9;i++){
             row.push(
                 <div className='board-row' key={'rw'+i}>
@@ -35,15 +65,24 @@ export default class Board extends React.Component{
                 <div className="status">{status}</div>
 
                 {this.state.walls.map((wall)=>{
-                    let w = posToArr(wall)
-                    let r = w.row
-                    let c = w.col
-                    let o = w.orr
-                    let style = {
-                        left:`${70+34*r}px`,
-                        top :`${70+34*c}px`
+                    let w = posToArr(wall),
+                        r = w.row,
+                        c = w.col,
+                        className = 'wall-'+w.orr,
+                        style = null;
+                    if(w.orr=='v'){
+                        style = {
+                            left:`${70+34*r -1*r}px`,
+                            top :`${70+34*c -1*c}px`,
+                        }
                     }
-                    return <Wall class='wall-v'
+                    else if(w.orr=='h'){
+                        style = {
+                            left:`${70+34*(r-1) -1*r}px`,
+                            top :`${70+34*c -1*c}px`,
+                        }
+                    }
+                    return <Wall  class={className}
                                     style={style}
                                     key={wall}/>
                     }

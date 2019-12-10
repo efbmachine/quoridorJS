@@ -7,7 +7,7 @@ function App() {
     return (
         <div className="game-area">
 
-            <Board width='500px' height='500px' walls={['a3v']} />
+            <Board width='500px' height='500px' />
 
         </div>
     );
