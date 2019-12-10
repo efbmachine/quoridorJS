@@ -1,11 +1,27 @@
+import React from 'react'
 
-export default class Wall {
-    constructor(position){
-        this.position = position;
+export default class Wall extends React.Component {
+    constructor(props){
+        super(props)
+        this.state = {
+            position : this.props.position
+        }
 
     }
 
-    display(canvas) {
+    componentDidMount() {
+
+    }
+
+    render(){
+        return(
+            <div className={this.props.class} style={this.props.style}>
+
+            </div>
+        )
+    }
+
+/**    display(canvas) {
         //Parses data so that it can be used for positioning
         let pos = this.posToCoord()
         let regex = /(\d)(\d)(\w)/
@@ -47,5 +63,6 @@ export default class Wall {
 
 
     }
+**/
 
 }
