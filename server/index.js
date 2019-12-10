@@ -6,6 +6,9 @@ let port  = 3001;
 
 Socketio.on('connection',(socket)=>{
     console.log('A new user just connected ' +socket.id)
+    socket.on('move',(position)=>{
+      console.log(`New position requested is: ${position}`)
+    })
     socket.on('placeWall',(position)=>{
         if(position.match(/\w\d\w/)){
             console.log(socket.id +':'+position)
