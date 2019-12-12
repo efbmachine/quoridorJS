@@ -6,34 +6,6 @@ import App from './App';
 
 
 
-class Player {
-    constructor(player1){
-        this.player1 = player1;
-        this.position = player1 ? 'e9' : 'e1';
-        this.wallNumber = 10;
-        let iconUrl = (player1 ?  "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg"
-                                : "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg");
-        this.style = {backgroundImage: "url('"+iconUrl+"')"};
-    }
-
-    static isMovePossible = (src,dst,walls,otherPlayer) => {
-        //Returns false if there is a wall in the way;
-        //        Also checks if enemy at destination to offset destination by 1
-        var path = []
-        path.push(posToArr(src))
-        path.push(posToArr(dst))
-        let checkWall = ()=>{
-
-            walls.forEatch((wall)=>{
-                wall.blockedWays().forEatch((path)=>{
-//                    if()
-                })
-            })
-        }
-        return true;
-    }
-
-}
 
 const posToArr = (position)=>{
     let regex = /(\w)(\d)(\w?)/

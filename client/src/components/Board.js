@@ -3,8 +3,9 @@ import io from'socket.io-client';
 
 import Wall from './Wall';
 import Square from './Square';
+import Player from './Player';
 import {posToArr, arrToPos} from '../helper';
-
+let socket;
 export default class Board extends React.Component{
     constructor(props){
       super(props)
@@ -12,11 +13,21 @@ export default class Board extends React.Component{
       const squareSize = 34
 
       this.state={
-        walls:props.walls || []
+        walls:props.walls || [],
+        playersPos: props.playersPos || []
 
       }
     }
-
+    componentDidMount(){
+         socket = io('localhost:3001')
+         socket.emit('joinGame',{room:'blah'})
+         socket.on('placeWall',(data)=>{
+             //To edit since not good practice
+             let walls = this.state.walls.slice()
+             walls.push(data.position)
+             this.setState({walls:walls})
+         })
+    }
     handleClick(i,j){
         let position = arrToPos([j,i])
         let walls = this.state.walls.slice();
@@ -24,14 +35,21 @@ export default class Board extends React.Component{
         if(dir != null && dir.toUpperCase()=='V'){
             position += dir
             console.log(position)
-            walls.push(position)
-            this.setState({walls:walls})
+            socket.emit('placeWall?',{position:position})
+            socket.on('placeWall',(data)=>{
+                walls.push(data.position)
+                this.setState({walls:walls})
+            })
+
         }
         else if(dir != null && dir.toUpperCase()=='H'){
             position += dir
             console.log(position)
-            walls.push(position)
-            this.setState({walls:walls})
+            socket.emit('placeWall?',{position:position})
+            socket.on('placeWall',(data)=>{
+                walls.push(data.position)
+                this.setState({walls:walls})
+            })
 
         }
         else {
@@ -58,12 +76,31 @@ export default class Board extends React.Component{
 
             }
         }
-        console.log(row)
         return (
 
             <div className='board'>
+
                 <div className="status">{status}</div>
 
+                {this.state.playersPos.map((player,index)=>{
+                    let p = posToArr(player),
+                        r = p.row,
+                        c = p.col,
+                        style = {
+                            left:`${70+34*(r-1) -1*r}px`,
+                            top :`${70+34*c -1*c}px`,
+                        },
+                        player1 = null
+
+                        if(index==0)
+                            player1 = true
+                        else {
+                            player1 = false
+                        }
+                        return <Player style={style} player1={player1} />
+
+
+                })}
                 {this.state.walls.map((wall)=>{
                     let w = posToArr(wall),
                         r = w.row,
@@ -87,7 +124,6 @@ export default class Board extends React.Component{
                                     key={wall}/>
                     }
                 )}
-
                 {row}
 
             </div>

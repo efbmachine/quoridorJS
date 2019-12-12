@@ -15,10 +15,10 @@ ol, ul {
     height: 600px;
     border: 2px solid black;
 }
+
 .board{
     margin: 70px
 }
-
 
 .wall-h{
     position:absolute;
@@ -33,7 +33,6 @@ ol, ul {
     height:67px;
     margin: -1px;
 }
-
 
 .board-row {
   clear: both;
@@ -56,4 +55,10 @@ ol, ul {
   margin-right: -1px;
   margin-top: -1px;
   width: 34px;
+}
+
+.player {
+    position: absolute;
+    width:30px;
+    height:30px
 }

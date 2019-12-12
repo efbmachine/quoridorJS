@@ -7,7 +7,7 @@ function App() {
     return (
         <div className="game-area">
 
-            <Board width='500px' height='500px' />
+            <Board width='500px' height='500px' playersPos={['e9','e1']}/>
 
         </div>
     );
