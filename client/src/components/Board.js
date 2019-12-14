@@ -13,6 +13,7 @@ export default class Board extends React.Component{
       const squareSize = 34
 
       this.state={
+        room:props.room,
         walls:props.walls || [],
         playersPos: props.playersPos || []
 
@@ -101,6 +102,7 @@ export default class Board extends React.Component{
 
 
                 })}
+
                 {this.state.walls.map((wall)=>{
                     let w = posToArr(wall),
                         r = w.row,
@@ -122,8 +124,8 @@ export default class Board extends React.Component{
                     return <Wall  class={className}
                                     style={style}
                                     key={wall}/>
-                    }
-                )}
+                    })}
+
                 {row}
 
             </div>
