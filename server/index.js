@@ -23,13 +23,14 @@ io.on('connection',(socket)=>{
     })
 
     socket.on('joinRoom',(data)=>{
-        console.log(socket+'just joined room: '+data.roomName)
         //Make player join the room
         socket.join(data.roomName)
+        console.log(socket+'just joined room: '+data.roomName)
         //Remove the room from Rooms since there is two players already
         rooms.map((room,index)=>{
             if(room.name==data.roomName){
                 rooms.slice(index,1)
+                console.log('Removed room: '+data.roomName)
             }
         })
         socket.emit('joinedRoom')
