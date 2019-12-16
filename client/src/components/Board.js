@@ -24,14 +24,14 @@ export default class Board extends React.Component{
          socket.emit('joinGame',{room:'blah'})
          socket.on('placeWall',(data)=>{
              //To edit since not good practice
-             let walls = this.state.walls.slice()
+             let walls = this.props.walls.slice()
              walls.push(data.position)
              this.setState({walls:walls})
          })
     }
     handleClick(i,j){
         let position = arrToPos([j,i])
-        let walls = this.state.walls.slice();
+        let walls = this.props.walls.slice();
         let dir = prompt('H or V','V')
         if(dir != null && dir.toUpperCase()==='V'){
             position += dir
@@ -83,7 +83,7 @@ export default class Board extends React.Component{
 
                 <div className="status">{status}</div>
 
-                {this.state.playersPos.map((player,index)=>{
+                {this.props.playersPos.map((player,index)=>{
                     let p = posToArr(player),
                         r = p.row,
                         c = p.col,
@@ -103,7 +103,7 @@ export default class Board extends React.Component{
 
                 })}
 
-                {this.state.walls.map((wall)=>{
+                {this.props.walls.map((wall)=>{
                     let w = posToArr(wall),
                         r = w.row,
                         c = w.col,
@@ -132,7 +132,7 @@ export default class Board extends React.Component{
         );
     }
 }
-/**
+/*
     constructor(props){
         super(props)
         this.state = {
@@ -183,4 +183,4 @@ export default class Board extends React.Component{
 
         );
     }
-}; **/
+}; */

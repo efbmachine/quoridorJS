@@ -13,8 +13,6 @@ io.on('connection',(socket)=>{
             console.log('sentRooms:' +rooms.map(map=> map.name))
     })
 
-
-
     socket.on('createRoom',(data)=>{
         console.log('data:'+data.roomName)
         let room = new Room(data.roomName)
@@ -24,9 +22,17 @@ io.on('connection',(socket)=>{
         console.log(rooms)
     })
 
-    socket.on('joinGame',(data)=>{
-        console.log(socket+'just joined room: '+data.room)
-        socket.join(data.room)
+    socket.on('joinRoom',(data)=>{
+        console.log(socket+'just joined room: '+data.roomName)
+        //Make player join the room
+        socket.join(data.roomName)
+        //Remove the room from Rooms since there is two players already
+        rooms.map((room,index)=>{
+            if(room.name==data.roomName){
+                rooms.slice(index,1)
+            }
+        })
+        socket.emit('joinedRoom')
     })
 
     socket.on('placeWall?',(data)=>{

@@ -12,7 +12,7 @@ export default class Rooms extends React.Component {
                 ((this.props.rooms[0]!=null)?
                     this.props.rooms.map((room)=>{
                         return (
-                            <p className='' onClick={()=> this.joinRoom(room.name)}>
+                            <p className='' onClick={()=> this.props.joinRoom(room.name)}>
                                 {room.name}
                             </p>
                         )

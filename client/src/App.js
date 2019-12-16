@@ -5,6 +5,7 @@ import io from'socket.io-client';
 import './css/App.css';
 import Board from './components/Board';
 import Index from './components/Index';
+import Game from './components/Game';
 
 class App extends React.Component {
     constructor(props){
@@ -17,15 +18,6 @@ class App extends React.Component {
 
     }
 
-    renderBoard() {
-        return(
-            <div className="game-area">
-
-                <Board width='500px' height='500px' playersPos={['e9','e1']}/>
-
-            </div>
-        )
-    }
 
     componentDidMount(){
         this.getRooms()
@@ -46,15 +38,21 @@ class App extends React.Component {
         this.setState({gameStart:true})
         //wait for player
         //start the game
-
+    }
+    joinRoom = (roomName)=>{
+        this.socket.emit('joinRoom',{roomName})
+        this.socket.on('joinedRoom',()=>{
+            this.setState({gameStart:true})
+        })
     }
     render(){
         return (
             <div>
                 { this.state.gameStart?
-                    this.renderBoard() :
+                    <Game/> :
                     <Index createGame={this.createGame}
-                            rooms={this.state.rooms}/>}
+                            rooms={this.state.rooms}
+                            joinRoom ={this.joinRoom}/>}
             </div>
         )
     }

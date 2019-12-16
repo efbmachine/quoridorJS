@@ -18,8 +18,17 @@ export default class Game extends React.Component{
     componentDidMount() {
 
     }
+    renderBoard() {
+        return(
+            <div className="game-area">
 
-    placeWall(position){
+                <Board width='500px' height='500px' playersPos={['e9','e1']}/>
+
+            </div>
+        )
+    }
+
+    placeWall = (position) =>{
         console.log(position)
         this.socket.emit('placeWall',position)
         this.socket.on('placeWall',(wall)=>{

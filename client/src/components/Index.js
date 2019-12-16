@@ -21,7 +21,7 @@ export default class Index extends React.Component {
             <div className='index'>
                 <div>
                     Rooms:
-                    <Rooms rooms={this.props.rooms} />
+                    <Rooms rooms={this.props.rooms} joinRoom={this.props.joinRoom} />
                 </div>
 
                 <div>
