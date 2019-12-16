@@ -6,7 +6,7 @@ import App from './App';
 
 
 
-
+/*
 const posToArr = (position)=>{
     let regex = /(\w)(\d)(\w?)/
     let positions = position.match(regex)
@@ -66,7 +66,7 @@ class Wall{
 
 
 
-
+*/
 
 
 

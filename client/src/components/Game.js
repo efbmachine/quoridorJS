@@ -9,7 +9,9 @@ export default class Game extends React.Component{
         super()
         this.socket = io('localhost:3001')
         this.state={
-            walls:[]
+            walls:[],
+            players:[],
+            message:''
         }
 
     }
@@ -34,7 +36,7 @@ export default class Game extends React.Component{
         return(
             <section>
                 <div>
-                    <Board width={600} height={600} walls={this.state.walls}/>
+                    <Board width={600} height={600} walls={this.state.walls} room=/>
                 </div>
                 Enter wall coordonates
                 <input className="wall" defaultValue="a2v"

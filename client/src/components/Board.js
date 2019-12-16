@@ -5,12 +5,11 @@ import Wall from './Wall';
 import Square from './Square';
 import Player from './Player';
 import {posToArr, arrToPos} from '../helper';
-let socket;
+let socket=null;
 export default class Board extends React.Component{
     constructor(props){
       super(props)
-      const margin = 70
-      const squareSize = 34
+
 
       this.state={
         room:props.room,
@@ -19,6 +18,7 @@ export default class Board extends React.Component{
 
       }
     }
+
     componentDidMount(){
          socket = io('localhost:3001')
          socket.emit('joinGame',{room:'blah'})
@@ -33,7 +33,7 @@ export default class Board extends React.Component{
         let position = arrToPos([j,i])
         let walls = this.state.walls.slice();
         let dir = prompt('H or V','V')
-        if(dir != null && dir.toUpperCase()=='V'){
+        if(dir != null && dir.toUpperCase()==='V'){
             position += dir
             console.log(position)
             socket.emit('placeWall?',{position:position})
@@ -43,7 +43,7 @@ export default class Board extends React.Component{
             })
 
         }
-        else if(dir != null && dir.toUpperCase()=='H'){
+        else if(dir != null && dir.toUpperCase()==='H'){
             position += dir
             console.log(position)
             socket.emit('placeWall?',{position:position})
@@ -93,7 +93,7 @@ export default class Board extends React.Component{
                         },
                         player1 = null
 
-                        if(index==0)
+                        if(index===0)
                             player1 = true
                         else {
                             player1 = false
@@ -109,13 +109,13 @@ export default class Board extends React.Component{
                         c = w.col,
                         className = 'wall-'+w.orr,
                         style = null;
-                    if(w.orr=='v'){
+                    if(w.orr==='v'){
                         style = {
                             left:`${70+34*r -1*r}px`,
                             top :`${70+34*c -1*c}px`,
                         }
                     }
-                    else if(w.orr=='h'){
+                    else if(w.orr==='h'){
                         style = {
                             left:`${70+34*(r-1) -1*r}px`,
                             top :`${70+34*c -1*c}px`,

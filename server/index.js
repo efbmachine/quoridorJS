@@ -8,13 +8,20 @@ let rooms = []
 
 io.on('connection',(socket)=>{
     console.log('A new user connected: '+socket.id)
+    socket.on('getRooms',(data)=>{
+            socket.emit('sendRooms',{rooms:rooms})
+            console.log('sentRooms:' +rooms.map(map=> map.name))
+    })
 
-    socket.on('createGame',(data)=>{
-        console.log('data:'+data.name +' '+data.room)
-        let room = new Room(data.room,data.name)
+
+
+    socket.on('createRoom',(data)=>{
+        console.log('data:'+data.roomName)
+        let room = new Room(data.roomName)
+        if(rooms.includes(room))
         socket.join(room.name)
         rooms.push(room)
-        socket.emit('newGame',{name:data.name, room:data.room})
+        console.log(rooms)
     })
 
     socket.on('joinGame',(data)=>{
@@ -35,9 +42,8 @@ http.listen(PORT, ()=>{
 
 // Class definition
 class Room{
-    constructor(name, creator){
+    constructor(name){
         this.name = name,
-        this.creator = creator
         this.game = null
         this.players =[]
     }

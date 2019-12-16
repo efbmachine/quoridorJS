@@ -62,3 +62,25 @@ ol, ul {
     width:30px;
     height:30px
 }
+
+div.rooms {
+    position:relative;
+    border:1px solid red;
+    min-width: 50px;
+    min-height: 50px;
+    max-height: 500px;
+    max-width:65%
+
+
+}
+p.room {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 500px
+}
+p.room {
+    margin:10px;
+}
+.button {
+    margin: 20px
+}
