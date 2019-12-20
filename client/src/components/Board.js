@@ -19,7 +19,6 @@ export default class Board extends React.Component{
         //Sets wall position, is it horizontal or vertical
         if(dir != null && dir.toUpperCase()==='V'){
             position += dir
-            console.log(position)
             // socket.emit('placeWall?',{position:position})
             // socket.on('placeWall',(data)=>{
             //     walls.push(data.position)
@@ -28,7 +27,6 @@ export default class Board extends React.Component{
         }
         else if(dir != null && dir.toUpperCase()==='H'){
             position += dir
-            console.log(position)
             // socket.emit('placeWall?',{position:position})
             // socket.on('placeWall',(data)=>{
             //     walls.push(data.position)
@@ -38,10 +36,12 @@ export default class Board extends React.Component{
         }
         else {
             alert('enter a valid value')
+            return null
         }
         //Check if the wall is already placed
         if(walls.includes(position)){
             alert('wall alredy exists')
+            return null
         }
         //Check if the coordonates are correct
 
