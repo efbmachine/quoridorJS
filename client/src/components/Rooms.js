@@ -5,7 +5,7 @@ export default class Rooms extends React.Component {
 
 
     render(){
-        console.log(this.props.rooms[0])
+        console.log(this.props.rooms)
         return (
             <div className='rooms'>
             {

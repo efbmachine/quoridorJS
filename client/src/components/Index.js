@@ -16,7 +16,6 @@ export default class Index extends React.Component {
     }
 
     render(){
-        console.log('rooms from index:'+this.props.rooms)
         return(
             <div className='index'>
                 <div>

@@ -13,17 +13,15 @@ class App extends React.Component {
         this.socket = io('localhost:3001')
         this.state= {
             gameStart: false,
-            rooms:[]
+            rooms:[],
+            player1:null,
         }
-
     }
-
 
     componentDidMount(){
         this.getRooms()
-
-
     }
+
     getRooms = ()=>{
         this.socket.emit('getRooms');
         this.socket.on('sendRooms',(data)=>{
@@ -33,23 +31,26 @@ class App extends React.Component {
     createGame =(roomName)=>{
         //Create room
         this.socket.emit('createRoom',{roomName:roomName})
-        console.log('Created Room')
         //add room to roomList: Done in server
         this.setState({gameStart:true})
+        this.setState({player1:true})
         //wait for player
         //start the game
     }
     joinRoom = (roomName)=>{
-        this.socket.emit('joinRoom',{roomName})
+        this.socket.emit('joinRoom',{roomName:roomName})
         this.socket.on('joinedRoom',()=>{
             this.setState({gameStart:true})
+            this.setState({player1:false})
+
         })
     }
     render(){
         return (
             <div>
                 { this.state.gameStart?
-                    <Game/> :
+                    <Game socket={this.socket}
+                            player1={this.state.player1}/> :
                     <Index createGame={this.createGame}
                             rooms={this.state.rooms}
                             joinRoom ={this.joinRoom}/>}

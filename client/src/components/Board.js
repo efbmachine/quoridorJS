@@ -1,60 +1,54 @@
 import React from 'react';
-import io from'socket.io-client';
 
 import Wall from './Wall';
 import Square from './Square';
 import Player from './Player';
 import {posToArr, arrToPos} from '../helper';
-let socket=null;
 export default class Board extends React.Component{
     constructor(props){
-      super(props)
-
-
-      this.state={
-        room:props.room,
-        walls:props.walls || [],
-        playersPos: props.playersPos || []
-
-      }
+        super(props)
     }
 
     componentDidMount(){
-         socket = io('localhost:3001')
-         socket.emit('joinGame',{room:'blah'})
-         socket.on('placeWall',(data)=>{
-             //To edit since not good practice
-             let walls = this.props.walls.slice()
-             walls.push(data.position)
-             this.setState({walls:walls})
-         })
+
     }
     handleClick(i,j){
         let position = arrToPos([j,i])
         let walls = this.props.walls.slice();
         let dir = prompt('H or V','V')
+        //Sets wall position, is it horizontal or vertical
         if(dir != null && dir.toUpperCase()==='V'){
             position += dir
             console.log(position)
-            socket.emit('placeWall?',{position:position})
-            socket.on('placeWall',(data)=>{
-                walls.push(data.position)
-                this.setState({walls:walls})
-            })
-
+            // socket.emit('placeWall?',{position:position})
+            // socket.on('placeWall',(data)=>{
+            //     walls.push(data.position)
+            //     this.setState({walls:walls})
+            // })
         }
         else if(dir != null && dir.toUpperCase()==='H'){
             position += dir
             console.log(position)
-            socket.emit('placeWall?',{position:position})
-            socket.on('placeWall',(data)=>{
-                walls.push(data.position)
-                this.setState({walls:walls})
-            })
+            // socket.emit('placeWall?',{position:position})
+            // socket.on('placeWall',(data)=>{
+            //     walls.push(data.position)
+            //     this.setState({walls:walls})
+            // })
 
         }
         else {
             alert('enter a valid value')
+        }
+        //Check if the wall is already placed
+        if(walls.includes(position)){
+            alert('wall alredy exists')
+        }
+        //Check if the coordonates are correct
+
+        //Add the wall to the board
+        else {
+            this.props.placeWall(position)
+            console.log('wall should be placed')
         }
     }
     renderSquare(i,j) {
@@ -64,7 +58,7 @@ export default class Board extends React.Component{
     }
 
     render(){
-        const status = 'Next player: White';
+        const status = this.props.message;
         let row = []
 
         //Creates the board (9*9)
@@ -104,6 +98,7 @@ export default class Board extends React.Component{
                 })}
 
                 {this.props.walls.map((wall)=>{
+                    console.log('this is the wall: '+wall)
                     let w = posToArr(wall),
                         r = w.row,
                         c = w.col,
