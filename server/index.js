@@ -104,6 +104,7 @@ io.on('connection',(socket)=>{
                 console.log('room.turn1='+room.turn1)
                 console.log('data.player1='+data.player1)
                 if(room.turn1==data.player1){
+                    room.walls.push(data.position)
                     io.to(data.room).emit('placeWall',{position:data.position})
                     room.toogleTurn()
                     let turn = room.turn1? 'Black':'White'
