@@ -66,15 +66,37 @@ io.on('connection',(socket)=>{
         if(!found){
             rooms.map(room=>{
                 if(room.name===roomName){
+                    console.log(room)
                     socket.emit('sendRoom',{room:roomName})
                 }
             })}
     })
 
-    socket.on('getPlayers',()=>{
+    socket.on('getPlayers',(data)=>{
+        let found = false
+        roomsJoinable.map(room=>{
+        //    console.log(`${room.name}: ${room.players}`)
+            if(room.name==data.room){
+                found = true
+                console.log('these are the players:' + room.players)
+                socket.emit('getPlayers',{players:room.players})
+            }
+        })
+        if (!found){
+            rooms.map(room=>{
+                if(room.name==data.room){
+                    found = true
+                    console.log('these are the players:' + room.players)
+                    socket.emit('getPlayers',{players:room.players})
+                }
+            })
+        }
+    })
+    socket.on('getPosition',(data)=>{
+        console.log('sending player postion')
 
     })
-    //To edit
+
     socket.on('placeWall?',(data)=>{
         console.log(socket.id+"("+data.room+"): "+data.position)
         rooms.map(room=>{
@@ -119,9 +141,6 @@ class Room{
     }
 
 }
-
-
-
 
 class Player{
     constructor(position, player1, wallNumber=10){

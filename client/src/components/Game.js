@@ -3,7 +3,7 @@ import io from 'socket.io-client';
 
 import Board from './Board';
 import Controls from './Controls'
-
+import {posToArr, arrToPos} from '../helper';
 
 export default class Game extends React.Component{
     constructor(props){
@@ -12,6 +12,7 @@ export default class Game extends React.Component{
             walls:[],
             roomName:'',
             message:'Waiting for another player',
+            playersPos:[]
         }
 
     }
@@ -22,6 +23,7 @@ export default class Game extends React.Component{
             this.setState({message:data.message})
         })
         this.waitForWall()
+        this.getPositions()
 
     }
     renderBoard() {
@@ -48,7 +50,7 @@ export default class Game extends React.Component{
     }
     waitForWall =()=>{
         //Wait for the opponent to send a wall
-        this.props.socket.on('placeWall',(data)=>{ 
+        this.props.socket.on('placeWall',(data)=>{
             console.log('this is the wall sent to us' +data.position)
             if(!this.state.walls.includes(data.position)){
                 this.setState({
@@ -67,20 +69,56 @@ export default class Game extends React.Component{
             this.setState({roomName:data.room})
         })
     }
-
-    getPlayers =()=>{
-        let room = this.getRoom()
-        console.log('This is the players ' +room.players)
-        return room.players
+    getPositions=()=>{
+        console.log('getting players position')
+        let playersPos = []
+        let roomName = this.state.roomName
+        this.props.socket.emit('getPlayers',{room:roomName})
+        this.props.socket.on('getPlayers',(data)=>{
+            data.players.map(player=>{
+                console.log('this is the player position'+player.position)
+                playersPos.push(player.position)
+            })
+        })
+        this.setState({playersPos:playersPos})
     }
 
+
+
+    move=(direction)=>{
+        let player1 = this.props.player1
+        let room = this.props.room
+        let position =this.props.socket.getPositions;
+        let newPosition=''
+        switch (direction) {
+            case 'up':
+                this.socket.emit('move',{player1:player1,
+                                        room:room,
+                                        position:newPosition})
+                break;
+            case 'down':
+
+                break;
+            case 'left':
+
+                break;
+            case 'right':
+
+                break;
+            default:
+
+        }
+    }
+
+
     render(){
+
         return(
             <section>
                 <div className='game-area'>
                     <Board
                         walls={this.state.walls}
-                        playersPos ={['e1','e9']}
+                        playersPos ={this.state.playersPos}
                         message={'In room:'+this.state.roomName + '. ' + this.state.message}
                         placeWall={this.placeWall}
                         />
