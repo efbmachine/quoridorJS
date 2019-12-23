@@ -150,7 +150,7 @@ class Room{
         this.name = name,
         this.game = null
         this.players =[]
-        this.wall = []
+        this.walls = []
         this.turn1 = true
     }
     createGame(){
