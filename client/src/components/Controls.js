@@ -8,14 +8,18 @@ export default class Controls extends React.Component{
     render(){
         return(
                 <div className='controls'>
-                        <p className='left-arrow'>
+                        <p className='left-arrow'
+                            onClick=this.props.move('left')>
                         </p>
 
-                        <p className='down-arrow'>
+                        <p className='down-arrow'
+                            onClick=this.props.move('down')>
                         </p>
-                        <p className='up-arrow'>
+                        <p className='up-arrow'
+                            onClick=this.props.move('up')>
                         </p>
-                        <p className='right-arrow'>
+                        <p className='right-arrow'
+                            onClick=this.props.move('right')>
                         </p>
                 </div>
         )
