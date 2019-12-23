@@ -12,18 +12,19 @@ export default class Game extends React.Component{
             walls:[],
             roomName:'',
             message:'Waiting for another player',
-            playersPos:[]
+            playersPos:['e1','e9']
         }
 
     }
     componentDidMount() {
         this.getRoom()
+        //Gets the message from the server and sets it in the state
         this.props.socket.on('message',(data)=>{
             console.log(data.message)
             this.setState({message:data.message})
         })
         this.waitForWall()
-        this.getPositions()
+        this.waitForMove()
 
     }
     renderBoard() {
@@ -69,18 +70,8 @@ export default class Game extends React.Component{
             this.setState({roomName:data.room})
         })
     }
-    getPositions=()=>{
-        console.log('getting players position')
-        let playersPos = []
-        let roomName = this.state.roomName
-        this.props.socket.emit('getPlayers',{room:roomName})
-        this.props.socket.on('getPlayers',(data)=>{
-            data.players.map(player=>{
-                console.log('this is the player position'+player.position)
-                playersPos.push(player.position)
-            })
-        })
-        this.setState({playersPos:playersPos})
+    waitForMove =() =>{
+        
     }
 
 
