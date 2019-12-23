@@ -116,6 +116,28 @@ io.on('connection',(socket)=>{
         })
     })
 
+    socket.on('move',(data)=>{
+        console.log(socket.id+"("+data.room+"): "+data.position)
+        rooms.map(room=>{
+            if(room.name==data.room){
+                console.log('room.turn1='+room.turn1)
+                console.log('data.player1='+data.player1)
+                if(room.turn1==data.player1){
+
+                    //edit to match move
+                    room.walls.push(data.position)
+                    io.to(data.room).emit('placeWall',{position:data.position})
+                    room.toogleTurn()
+                    let turn = room.turn1? 'Black':'White'
+                    io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
+                    //edits needs to stop  here
+                }else{
+                    socket.emit('message',{message:'It is not your turn'})
+                }
+            }
+        })
+    })
+
     socket.on("disconnect", () => console.log("Client disconnected"));
 })
 http.listen(PORT, ()=>{
