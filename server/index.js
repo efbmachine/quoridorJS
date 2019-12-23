@@ -194,14 +194,14 @@ const isPlaceable = (wall, walls) =>{
     })
 }
 
-export const posToArr = (position)=>{
+const posToArr = (position)=>{
     let regex = /(\w)(\d)(\w?)/
     let positions = position.match(regex)
     let row = positions[1].charCodeAt(0) - 96
     return ({'row':row,'col':Number(positions[2])-1,'orr':positions[3].toLowerCase()})
 }
 
-export const arrToPos =(arr)=>{
+const arrToPos =(arr)=>{
     console.log(arr)
     let row = String.fromCharCode(96 + Number(arr[0]))
     let col = Number(arr[1])
