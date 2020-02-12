@@ -1,0 +1,18 @@
+-Status:
+Implement the login so that once you refresh
+    the page you can login and get back in your game
+
+-Status:
+Implement the fact that they gotta be a path to the
+    opponents final line
+
+-Status:
+Implement the AI
+(Check shortest path algorithm)
+
+-Status: In process
+Make it impossible to place walls at a1(hv), i1(hv), a9(v) & i9(v)
+
+-Status:
+Make it impossible to have two walls overlap
+    ex: a5h & b5h || a5v & a6v
