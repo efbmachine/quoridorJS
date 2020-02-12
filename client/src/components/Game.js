@@ -1,9 +1,8 @@
 import React from 'react';
-import io from 'socket.io-client';
 
 import Board from './Board';
 import Controls from './Controls'
-import {posToArr, arrToPos} from '../helper';
+import {posToObj, objToPos} from '../helper';
 
 export default class Game extends React.Component{
     constructor(props){
@@ -12,7 +11,8 @@ export default class Game extends React.Component{
             walls:[],
             roomName:'',
             message:'Waiting for another player',
-            playersPos:['e1','e9']
+            playersPos:['e9','e1'],
+            wallNumber:[10,10]
         }
 
     }
@@ -25,13 +25,14 @@ export default class Game extends React.Component{
         })
         this.waitForWall()
         this.waitForMove()
+        this.getWallNumber()
 
     }
     renderBoard() {
         return(
             <div className="game-area">
 
-                <Board width='500px' height='500px' playersPos={['e9','e1']}/>
+                <Board width='500px' height='500px' playersPos={this.state.playersPos}/>
 
             </div>
         )
@@ -71,33 +72,77 @@ export default class Game extends React.Component{
         })
     }
     waitForMove =() =>{
-        
+        this.props.socket.on('move',(data)=>{
+            if(data.player1){
+                let otherPlayer = this.state.playersPos[1]
+                let playersPos = []
+                playersPos.push(data.position)
+                playersPos.push(otherPlayer)
+                this.setState({playersPos:playersPos})
+            }else{
+                let otherPlayer = this.state.playersPos[0]
+                let playersPos = []
+                playersPos.push(otherPlayer)
+                playersPos.push(data.position)
+                this.setState({playersPos:playersPos})
+            }
+        })
+    }
+    getWallNumber =() =>{
+        this.props.socket.on('wallNumber',(data)=>{
+            console.log(data.wallNumber)
+            this.setState({wallNumber:data.wallNumber})
+        })
     }
 
 
 
     move=(direction)=>{
         let player1 = this.props.player1
-        let room = this.props.room
-        let position =this.props.socket.getPositions;
+        let room = this.state.roomName
+        let position = player1? this.state.playersPos[0] : this.state.playersPos[1]
         let newPosition=''
+        let temp=null
         switch (direction) {
             case 'up':
-                this.socket.emit('move',{player1:player1,
+                temp = posToObj(position)
+                temp.col-=1
+                console.log('value of temp')
+                console.log(temp)
+                console.log('value of newPosition')
+                newPosition = objToPos(temp)
+                console.log(newPosition)
+                this.props.socket.emit('move',{player1:player1,
                                         room:room,
                                         position:newPosition})
                 break;
             case 'down':
-
+                temp = posToObj(position)
+                temp.col+=1
+                newPosition = objToPos(temp)
+                this.props.socket.emit('move',{player1:player1,
+                                        room:room,
+                                        position:newPosition})
                 break;
             case 'left':
-
+                temp = posToObj(position)
+                temp.row-=1
+                newPosition = objToPos(temp)
+                this.props.socket.emit('move',{player1:player1,
+                                        room:room,
+                                        position:newPosition})
                 break;
             case 'right':
-
+                temp = posToObj(position)
+                temp.row+=1
+                newPosition = objToPos(temp)
+                this.props.socket.emit('move',{player1:player1,
+                                        room:room,
+                                        position:newPosition})
                 break;
             default:
-
+                console.log('Choose option')
+                break;
         }
     }
 
@@ -113,7 +158,12 @@ export default class Game extends React.Component{
                         message={'In room:'+this.state.roomName + '. ' + this.state.message}
                         placeWall={this.placeWall}
                         />
-                    <Controls />
+                    <Controls move={this.move}/>
+                    <p>
+                        Black:{this.state.wallNumber[0]}walls
+                        White:{this.state.wallNumber[1]}walls
+                    </p>
+
                 </div>
                 <br/>
 

@@ -3,11 +3,8 @@ import React from 'react';
 import Wall from './Wall';
 import Square from './Square';
 import Player from './Player';
-import {posToArr, arrToPos} from '../helper';
+import {posToObj, arrToPos} from '../helper';
 export default class Board extends React.Component{
-    constructor(props){
-        super(props)
-    }
 
     componentDidMount(){
 
@@ -78,7 +75,7 @@ export default class Board extends React.Component{
                 <div className="status">{status}</div>
 
                 {this.props.playersPos.map((player,index)=>{
-                    let p = posToArr(player),
+                    let p = posToObj(player),
                         r = p.row,
                         c = p.col,
                         style = {
@@ -99,7 +96,7 @@ export default class Board extends React.Component{
 
                 {this.props.walls.map((wall)=>{
                     console.log('this is the wall: '+wall)
-                    let w = posToArr(wall),
+                    let w = posToObj(wall),
                         r = w.row,
                         c = w.col,
                         className = 'wall-'+w.orr,

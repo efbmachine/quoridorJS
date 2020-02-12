@@ -24,7 +24,7 @@ io.on('connection',(socket)=>{
             socket.join(room.name)
             console.log(socket.id +' just joined room: '+data.roomName)
             // Create a player element and add it to the room
-            let player = new Player('e1',true)
+            let player = new Player('e9',true)
             room.addPlayer(player)
             players.push(player) // needs to be modified
             roomsJoinable.push(room)
@@ -41,7 +41,7 @@ io.on('connection',(socket)=>{
         //and put it in rooms
         roomsJoinable.map((room,index)=>{
             if(room.name==data.roomName){
-                let player = new Player('e9',false)
+                let player = new Player('e1',false)
                 room.addPlayer(player)
                 rooms.push(room)
                 roomsJoinable.splice(index,1)
@@ -98,17 +98,22 @@ io.on('connection',(socket)=>{
     })
 
     socket.on('placeWall?',(data)=>{
-        console.log(socket.id+"("+data.room+"): "+data.position)
+        var player = data.player1? 'Black' : 'White'
+        console.log(player+"("+data.room+"): "+data.position)
+        player = data.player1 ? 0 : 1
         rooms.map(room=>{
             if(room.name==data.room){
-                console.log('room.turn1='+room.turn1)
-                console.log('data.player1='+data.player1)
                 if(room.turn1==data.player1){
-                    room.walls.push(data.position)
-                    io.to(data.room).emit('placeWall',{position:data.position})
-                    room.toogleTurn()
-                    let turn = room.turn1? 'Black':'White'
-                    io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
+                    if(room.players[player].placeWall()){
+                        room.addWall(data.position)
+                        io.to(data.room).emit('wallNumber',{wallNumber:room.getPlayerWallNumber()})
+                        io.to(data.room).emit('placeWall',{position:data.position})
+                        room.toogleTurn()
+                        let turn = room.turn1? 'Black':'White'
+                        io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
+                    }else {
+                        socket.emit('message',{message:'You don\'t have anymore walls'})
+                    }
                 }else{
                     socket.emit('message',{message:'It is not your turn'})
                 }
@@ -117,20 +122,41 @@ io.on('connection',(socket)=>{
     })
 
     socket.on('move',(data)=>{
-        console.log(socket.id+"("+data.room+"): "+data.position)
+        var player = data.player1? 'Black' : 'White'
         rooms.map(room=>{
             if(room.name==data.room){
-                console.log('room.turn1='+room.turn1)
-                console.log('data.player1='+data.player1)
+                // console.log('room.turn1='+room.turn1)
+                // console.log('data.player1='+data.player1)
                 if(room.turn1==data.player1){
+                    var oldPosition = data.player1? room.players[0].position
+                                                    :room.players[1].position
+                    console.log(`${player}(${data.room}):${oldPosition}-->${data.position}`)
 
-                    //edit to match move
-                    room.walls.push(data.position)
-                    io.to(data.room).emit('placeWall',{position:data.position})
-                    room.toogleTurn()
-                    let turn = room.turn1? 'Black':'White'
-                    io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
-                    //edits needs to stop  here
+                    //TODO: Check if move is posible
+                    var possible = true;
+                    console.log(room.blockedPaths)
+                    room.blockedPaths.map(block=>{
+                        console.log(block)
+                        if( (block[1]==oldPosition && block[0]==data.position)||
+                            (block[0]==oldPosition && block[1]==data.position)){
+                                possible=false;
+                            }
+                    })
+                    if(possible){
+                        io.to(data.room).emit('move',{player1:data.player1,
+                                                        position:data.position})
+                        room.toogleTurn()
+                        //changes player position in the room
+                        if(data.player1){
+                            room.players[0].changePosition(data.position)
+                        }else{
+                            room.players[1].changePosition(data.position)
+                        }
+                        let turn = room.turn1? 'Black':'White'
+                        io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
+                    }else{
+                        socket.emit('message',{message:'Move is not posible'})
+                    }
                 }else{
                     socket.emit('message',{message:'It is not your turn'})
                 }
@@ -151,10 +177,14 @@ class Room{
         this.game = null
         this.players =[]
         this.walls = []
+        this.blockedPaths = []
         this.turn1 = true
     }
-    createGame(){
-
+    getPlayerWallNumber(){
+        let arr =[]
+        arr.push(this.players[0].wallNumber)
+        arr.push(this.players[1].wallNumber)
+        return arr
     }
     addPlayer(player){
         this.players.push(player)
@@ -162,7 +192,60 @@ class Room{
     toogleTurn(){
         this.turn1 = !this.turn1
     }
-
+    getPlayerPositions(){
+        let arr =[]
+        arr.push(this.players[0].position)
+        arr.push(this.players[1].position)
+        return arr
+    }
+    blockedWays(wall){
+        let pos = posToObj(wall)
+        if(pos.orr=='h'){
+            // example:  f3h: f3-f2; g3-g2
+            // means the offset is -1 for col and then +1 for row
+            let path = {};
+            //  TO SEE THE KEYS OF path USE Object.entries(path)
+            let p1 = numToTxt(pos.row)+ (pos.col+1),
+                p2 = numToTxt(pos.row) +(pos.col);
+            let p3 = numToTxt(pos.row+1) + (pos.col+1),
+                p4 = numToTxt(pos.row+1) +(pos.col);
+            path[p1]= p2
+            path[p3]= p4
+            let rtn = []
+            Object.entries(path).map(entries=>{
+                rtn.push(entries)
+            })
+            return rtn
+        }
+        else{
+            // example: f3v: f3-g3:f4-g4
+            //means the offset is +1 for row and then +1 for col
+            let path = {};
+            let p1 = numToTxt(pos.row)     +  (pos.col+1),//f3
+                p2 = numToTxt(pos.row+1) + (pos.col+1);//g3
+            let p3 = numToTxt(pos.row)   + (pos.col+2),//f4
+                p4 = numToTxt(pos.row+1) + (pos.col+2);//g4
+            path[p1]= p2;
+            path[p3]= p4;
+            let rtn = []
+            Object.entries(path).map(entries=>{
+                rtn.push(entries)
+            })
+            console.log(rtn)
+            return rtn
+        }
+    }
+    addWall(wall){
+            this.walls.push(wall)
+            let path = this.blockedWays(wall)
+            let temp =this.blockedPaths.concat(path)
+            this.blockedPaths = temp
+            console.log('here are all the forbidden moves: '+this.blockedPaths)
+    }
+    // Function to check whether there is still a way toward the enemy line
+    openPath(brockedPaths){
+        // example:  f3h: f3-f2; g3-g2
+    }
 }
 
 class Player{
@@ -170,65 +253,39 @@ class Player{
         this.position = position,
         this.player1 = player1
         this.wallNumber = wallNumber
-        this.justPlayed = false;
     }
     placeWall(){
-        if(wallNumber>0)
+        if(this.wallNumber>0){
             this.wallNumber -= 1
-        this.justPlayed =true
+            return true
+        }else
+            return false
+    }
+    changePosition(newPos){
+        this.position=newPos
     }
 }
 
-const blockedWays = (wall) =>{
-    let pos = posToArr(wall)
-    if(pos.orr=='h'){
-        // example:  f3h: f3-f2; g3-g2
-        // means the offset is -1 for col and then +1 for row
-        let path = {};
-        //  TO SEE THE KEYS OF path USE Object.entries(path)
-        let p1 = pos.row+''+pos.col,
-            p2 = pos.row +''+(pos.col-1);
-        let p3 = (pos.row+1) + '' +pos.col,
-            p4 = (pos.row+1) + '' +(pos.col-1);
-        path[p1]= p2
-        path[p3]= p4
-        return Object.entries(path)
-    }
-    else{
-        // example: f3v: f3-g3:f4-g4
-        //means the offset is +1 for row and then +1 for col
-        let path = {};
-        let p1 = pos.row     + '' + pos.col,//f3
-            p2 = (pos.row+1) + '' + pos.col;//g3
-        let p3 = (pos.row)   + '' + pos.col+1,//f4
-            p4 = (pos.row+1) + '' + (pos.col+1);//g4
-        path[p1]= p2;
-        path[p3]= p4;
-        return Object.entries(path)
-    }
-}
+// const isPlaceable = (wall, walls) =>{
+//     walls.forEatch((item)=>{
+//         if(item.position == wall.position)
+//             return false;
+//         return true;
+//     })
+// }
 
-const isPlaceable = (wall, walls) =>{
-    walls.forEatch((item)=>{
-        if(item.position == wall.position)
-            return false;
-        return true;
-    })
-}
-
-const posToArr = (position)=>{
+const posToObj = (position)=>{
     let regex = /(\w)(\d)(\w?)/
     let positions = position.match(regex)
     let row = positions[1].charCodeAt(0) - 96
     return ({'row':row,'col':Number(positions[2])-1,'orr':positions[3].toLowerCase()})
 }
-
-const arrToPos =(arr)=>{
-    console.log(arr)
-    let row = String.fromCharCode(96 + Number(arr[0]))
-    let col = Number(arr[1])
-    let result = row+''+col
-    console.log(result)
-    return result
-
+const numToTxt =(num)=>{
+    return String.fromCharCode(96 + Number(num))
+}
+const objToPos =(obj)=>{
+    let r = numToTxt(obj.row),
+        c = obj.col+1,
+        o = obj.orr;
+    return (r+''+c+''+o)
 }

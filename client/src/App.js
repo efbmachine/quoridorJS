@@ -1,16 +1,15 @@
 import React from 'react';
-import io from'socket.io-client';
+import io from 'socket.io-client';
 
 // import logo from './logo.svg';
 import './css/App.css';
-import Board from './components/Board';
 import Index from './components/Index';
 import Game from './components/Game';
 
 class App extends React.Component {
     constructor(props){
         super(props)
-        this.socket = io('localhost:3001')
+        this.socket = io('127.0.0.1:3001')
         this.state= {
             gameStart: false,
             rooms:[],

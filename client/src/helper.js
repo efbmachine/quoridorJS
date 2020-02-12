@@ -1,10 +1,17 @@
 
 
-export const posToArr = (position)=>{
+export const posToObj = (position)=>{
     let regex = /(\w)(\d)(\w?)/
     let positions = position.match(regex)
     let row = positions[1].charCodeAt(0) - 96
     return ({'row':row,'col':Number(positions[2])-1,'orr':positions[3].toLowerCase()})
+}
+
+export const objToPos =(obj)=>{
+    let r = String.fromCharCode(96 + Number(obj.row)),
+        c = obj.col+1,
+        o = obj.orr;
+    return (r+''+c+''+o)
 }
 
 export const arrToPos =(arr)=>{
