@@ -2,15 +2,18 @@
 Implement the login so that once you refresh
     the page you can login and get back in your game
 
--Status:
+-Status: In process
 Implement the fact that they gotta be a path to the
     opponents final line
 
--Status:
+-Status: Done
 Implement the AI
 (Check shortest path algorithm)
+    -Status: in progress
+    Connect AI to actual game
 
--Status: In process
+    
+-Status:
 Make it impossible to place walls at a1(hv), i1(hv), a9(v) & i9(v)
 
 -Status:

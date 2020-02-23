@@ -242,8 +242,9 @@ class Room{
             this.blockedPaths = temp
             console.log('here are all the forbidden moves: '+this.blockedPaths)
     }
-    // Function to check whether there is still a way toward the enemy line
+    // ---------------------- INCOMPLETE -------------------
     openPath(brockedPaths){
+        // Function to check whether there is still a way toward the enemy line
         // example:  f3h: f3-f2; g3-g2
     }
 }
