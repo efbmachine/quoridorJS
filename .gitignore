@@ -1,3 +1,8 @@
 node_module
 client/node_modules
 server/node_modules
+board.js
+game.js
+index.html
+index.js
+tile.js
