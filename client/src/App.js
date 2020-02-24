@@ -4,6 +4,7 @@ import io from 'socket.io-client';
 // import logo from './logo.svg';
 import './css/App.css';
 import Index from './components/Index';
+import AI from './components/AI.js'
 import Game from './components/Game';
 
 class App extends React.Component {
@@ -44,6 +45,18 @@ class App extends React.Component {
 
         })
     }
+    createGamevsAi =() =>{
+        //create AI
+        var ai = new AI('e1','e9')
+        //Create room
+        this.socket.emit('createRoomAI')
+        //add room to roomList: Done in server
+        this.setState({gameStart:true})
+        this.setState({player1:true})
+
+        //wait for player
+        //start the game
+    }
     render(){
         return (
             <div>
@@ -51,6 +64,7 @@ class App extends React.Component {
                     <Game socket={this.socket}
                             player1={this.state.player1}/> :
                     <Index createGame={this.createGame}
+                            createGamevsAi={this.createGamevsAi}
                             rooms={this.state.rooms}
                             joinRoom ={this.joinRoom}/>}
             </div>

@@ -1,6 +1,6 @@
 const io = require('socket.io-client');
 
-module.exports = class AI {
+export default class AI {
 
     constructor(startNode, endNode){
         this.position=0;
@@ -9,9 +9,9 @@ module.exports = class AI {
 
         this.socket = io('127.0.0.1:3001')
         this.socket.on('wakeUp',(data)=>{
-
+            console.log("---------------I'm awake dawg-----------------------------")
             this.roomName = data.roomName
-            this.socket.emit(joinRoom,{roomName:this.roomName})
+            this.socket.emit('joinRoom',{roomName:this.roomName})
         this.board = new Board(this.walls)
         this.path = this.shortestPath(startNode,endNode)
         })

@@ -1,5 +1,6 @@
 var http = require('http').createServer(require('./app.js'));
-var io = require('socket.io')(http)
+var io = require('socket.io')(http);
+var AI = require('./AI.js');
 
 
 const PORT  = 3001;
@@ -7,6 +8,7 @@ const PORT  = 3001;
 let roomsJoinable = []
 let rooms =[]
 let players = []
+let AIS = []
 
 io.on('connection',(socket)=>{
     console.log('A new user connected: '+socket.id)
@@ -24,12 +26,28 @@ io.on('connection',(socket)=>{
             socket.join(room.name)
             console.log(socket.id +' just joined room: '+data.roomName)
             // Create a player element and add it to the room
-            let player = new Player('e9',true)
+            let player = new Player('e1',true)
             room.addPlayer(player)
             players.push(player) // needs to be modified
             roomsJoinable.push(room)
             console.log(room.name +' was added to roomsJoinable')
         }
+    })
+
+    socket.on('createRoomAI',(data)=>{
+        let room = new Room('AI'+AIS.length)
+        socket.join(room.name)
+        console.log(socket.id +' just joined room: '+room.name)
+        // Create a player element and add it to the room
+        let player = new Player('e1',true)
+        room.addPlayer(player)
+        players.push(player) // needs to be modified
+        //CREATE THE AI OVER HERE
+        let ai = new AI('e9','e1')
+        AIS.push(ai)
+        socket.emit('wakeUp',{roomName:room.name})
+        console.log(room.name +' was added to ai list')
+
     })
 
     socket.on('joinRoom',(data)=>{
@@ -41,7 +59,7 @@ io.on('connection',(socket)=>{
         //and put it in rooms
         roomsJoinable.map((room,index)=>{
             if(room.name==data.roomName){
-                let player = new Player('e1',false)
+                let player = new Player('e9',false)
                 room.addPlayer(player)
                 rooms.push(room)
                 roomsJoinable.splice(index,1)
