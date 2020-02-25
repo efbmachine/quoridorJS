@@ -45,7 +45,7 @@ export default class Board extends React.Component{
         //Add the wall to the board
         else {
             this.props.placeWall(position)
-            console.log('wall should be placed')
+            // console.log('wall should be placed')
         }
     }
     renderSquare(i,j) {
@@ -75,6 +75,8 @@ export default class Board extends React.Component{
                 <div className="status">{status}</div>
 
                 {this.props.playersPos.map((player,index)=>{
+                    console.log('coming fram board this is value of player' +index)
+                    console.log(player)
                     let p = posToObj(player),
                         r = p.row,
                         c = p.col,
@@ -95,7 +97,7 @@ export default class Board extends React.Component{
                 })}
 
                 {this.props.walls.map((wall)=>{
-                    console.log('this is the wall: '+wall)
+                    // console.log('this is the wall: '+wall)
                     let w = posToObj(wall),
                         r = w.row,
                         c = w.col,

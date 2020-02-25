@@ -43,7 +43,7 @@ export default class Index extends React.Component {
 
                 <button
                     className='button'
-                    onClick={()=>this.props.createGamevsAi()}>
+                    onClick={()=>this.props.createGamevsAi(this.state.roomName)}>
                     Play against AI
                 </button>
             </div>

@@ -20,7 +20,7 @@ export default class Game extends React.Component{
         this.getRoom()
         //Gets the message from the server and sets it in the state
         this.props.socket.on('message',(data)=>{
-            console.log(data.message)
+    //        console.log(data.message)
             this.setState({message:data.message})
         })
         this.waitForWall()
@@ -42,9 +42,9 @@ export default class Game extends React.Component{
     }
 
     placeWall = (position) =>{
-        console.log('sending this wall to server: '+position)
+        // console.log('sending this wall to server: '+position)
         let room = this.state.roomName
-        console.log('this is the room we\'re in: '+ room)
+        // console.log('this is the room we\'re in: '+ room)
         let player1 = this.props.player1
         this.props.socket.emit('placeWall?',{position:position,room:room,player1:player1})
         //Wait for the opponent to send a wall
@@ -53,26 +53,27 @@ export default class Game extends React.Component{
     waitForWall =()=>{
         //Wait for the opponent to send a wall
         this.props.socket.on('placeWall',(data)=>{
-            console.log('this is the wall sent to us' +data.position)
+            // console.log('this is the wall sent to us' +data.position)
             if(!this.state.walls.includes(data.position)){
                 this.setState({
                     walls: this.state.walls.concat([data.position])
                 })
             }
             //this.state.walls.push(wall)
-            console.log('server said: ' + data.position)
+            // console.log('server said: ' + data.position)
         })
     }
     getRoom =() =>{
-        console.log('getting  the room')
+        // console.log('getting  the room')
         this.props.socket.emit('getRoom')
         this.props.socket.on('sendRoom',(data)=>{
-            console.log('getRoom gave us' + data.room)
+            // console.log('getRoom gave us' + data.room)
             this.setState({roomName:data.room})
         })
     }
     waitForMove =() =>{
         this.props.socket.on('move',(data)=>{
+            console.log(data.player1)
             if(data.player1){
                 let otherPlayer = this.state.playersPos[1]
                 let playersPos = []
@@ -90,7 +91,7 @@ export default class Game extends React.Component{
     }
     getWallNumber =() =>{
         this.props.socket.on('wallNumber',(data)=>{
-            console.log(data.wallNumber)
+            // console.log(data.wallNumber)
             this.setState({wallNumber:data.wallNumber})
         })
     }

@@ -45,11 +45,13 @@ class App extends React.Component {
 
         })
     }
-    createGamevsAi =() =>{
+    createGamevsAi =(roomName) =>{
+        this.socket.emit('createRoom',{roomName:roomName})
         //create AI
-        var ai = new AI('e1','e9')
-        //Create room
-        this.socket.emit('createRoomAI')
+        var ai = new AI('e9','f1',roomName)
+        ai.waitTurn()
+
+
         //add room to roomList: Done in server
         this.setState({gameStart:true})
         this.setState({player1:true})

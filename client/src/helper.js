@@ -15,11 +15,11 @@ export const objToPos =(obj)=>{
 }
 
 export const arrToPos =(arr)=>{
-    console.log(arr)
+    // console.log(arr)
     let row = String.fromCharCode(96 + Number(arr[0]))
     let col = Number(arr[1])
     let result = row+''+col
-    console.log(result)
+    // console.log(result)
     return result
 
 }

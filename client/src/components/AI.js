@@ -1,20 +1,21 @@
 const io = require('socket.io-client');
 
 export default class AI {
+    ///
+    ///
+    ///             NEED TO FIX THE BOARD POSITIONING PROBLEM
+    ///             WORKING ONLY ON STRAIGHT LINE RIGHT NOW
+    ///
 
-    constructor(startNode, endNode){
-        this.position=0;
+    constructor(startNode, endNode,roomName){
+        this.position=startNode;
         this.walls =[]
-
-
         this.socket = io('127.0.0.1:3001')
-        this.socket.on('wakeUp',(data)=>{
-            console.log("---------------I'm awake dawg-----------------------------")
-            this.roomName = data.roomName
-            this.socket.emit('joinRoom',{roomName:this.roomName})
+        this.roomName = roomName
+        this.socket.emit('joinRoom',{roomName:this.roomName})
         this.board = new Board(this.walls)
         this.path = this.shortestPath(startNode,endNode)
-        })
+
     }
     tileInArr(arr, tile){
         let rtn = [false]
@@ -81,20 +82,14 @@ export default class AI {
             closed.push(current.position)
             // check if current is target
             if(current.position==endNode){
-                console.log('path has been found')
-                this.board.renderBoard()
-                console.log(`found in ${i} tries`)
+                console.log(`path found in ${i} attempt`)
                 //console.log(current)
                 let path = []
                 this.board.backtrackPath(current,path)
                 path.reverse()
-                let rtn =[]
-                path.forEach((item) => {
-                    rtn.push(item.position)
-                });
-                console.log(`can be done in ${rtn.length} moves`)
-                console.log(rtn)
-                return rtn
+                console.log(`Path is ${path.length} move long`)
+                console.log(path)
+                return path
             }
 
             //For each neightbour if not atteinable or in closed skip to next one
@@ -117,21 +112,63 @@ export default class AI {
                 // console.log("nTile")
                 // console.log(nTile)
             }
-            console.log(`------------------${i}------------------------------------------`)
-            this.board.renderBoard()
+
             // console.log(open)
         }
         console.log(false)
         return false
     }
+    goTo(position){
+        this.position=position
+        this.socket.emit('move',{player1:false,
+                                    room:this.roomName,
+                                    position:position})
 
 
+    }
+    placeWall(wall){
+        this.socket.emit('placeWall?',{position:wall,
+                                        room:this.roomName,
+                                        player1:false})
+    }
+    update(enemyMove){
+        if(enemyMove.length==3){
+            //add the new wall to the board
+            this.board.addWall(enemyMove)
+            //check the new best path to objective
+            console.log('enemy just put wall at:'+enemyMove)
+            this.path = this.shortestPath('e9',this.position)
+        }
+        // If the enemy is simply moving then set the currPos to false
+        // and the next one to tru
+        else{
+            this.opponent = enemyMove
+
+        }
+
+
+
+    }
+    play(){
+        let newPos = this.path.pop()
+        this.goTo(newPos)
+        console.log('remaining path:'+ this.path)
+    }
+    waitTurn(){
+        console.log('AI is waiting for U')
+        this.socket.on('turn',(data)=>{
+            console.log('It is my turn xD')
+            this.update(data.move)
+            this.play()
+
+        })
+    }
 }
 
 class Board {
-    constructor(walls){
+    constructor(){
         this.Tiles = []
-        this.walls = walls
+        this.walls = []
         this.blockedWays = [
                             // ['a1','a2'],['b1','b2'],
                             // ['c1','c2'],['d1','d2'],
@@ -144,25 +181,19 @@ class Board {
                             // ['i8','i9'],['h8','h9']
 
                         ]
-        walls.forEach((item, i) => {
-            this.wallToBlockedWays(item)
-        });
+
         this.createBoard()
     }
     wallToBlockedWays(wallCoord){
         let rtn = []
-        console.log(wallCoord)
-        console.log(0)
         if(wallCoord[2]=='h' || wallCoord[2]=='H'){
             let tmp = wallCoord.slice(0,-1)
-            console.log(1)
             let x1 = tmp,
                 y1 = Tile.posPlusMoves(tmp, 0,+1),
                 x2 = Tile.posPlusMoves(tmp, 1,0),
                 y2 = Tile.posPlusMoves(tmp, 1,+1)
             rtn.push([x1,y1])
             rtn.push([x2,y2])
-            console.log(rtn)
 
         }else if (wallCoord[2]=='v'|| wallCoord[2]=='V') {
             let tmp = wallCoord.slice(0,-1)
@@ -176,10 +207,10 @@ class Board {
             console.log(rtn)
 
         }
-        console.log(3)
         let temp = this.blockedWays.concat(rtn)
         this.blockedWays = temp
     }
+
     createBoard(){
         for(let x=9;x>=1;x--){
             for(let y=1;y<=9;y++){
@@ -189,36 +220,16 @@ class Board {
             }
         }
     }
-    renderBoard(){
-        let count = 0;
-        this.Tiles.forEach((Tile,i) => {
-            // if(Tile.fCost<999 && Tile.previous!=null){
-            //     process.stdout.write(' '+Tile.previous+' ')
-            //
-            // }else{
-
-                // let char = 3 - Tile.fCost.length
-                // let str = ''
-                //
-                // while(char<3){
-                //     char++
-                //     str+=' '
-
-                //}
-                process.stdout.write(' '+Tile.position+' ');
-            //}
-            count++
-            if(count%9==0){
-                console.log()
-            }
-        })
+    addWall(wall){
+        this.wallToBlockedWays(wall)
+        this.walls.push(wall)
     }
     position2Tile(position){
-        let num = this.position2Number(position)
+        let num = Board.position2Number(position)
         return this.Tiles[num]
     }
-    position2Number(position){
-        // console.log('-------------------------------')
+    static position2Number(position){
+        // console.log('----------p2N---------------------')
         // console.log(position)
         // return the number in the arr of a given position
         let x = position[0].charCodeAt(0) - 96
@@ -242,7 +253,7 @@ class Board {
             return acc;
         }
         let parrent = this.position2Tile(tile.previous)
-        acc.push(parrent)
+        acc.push(parrent.position)
         this.backtrackPath(parrent,acc)
 
     }
