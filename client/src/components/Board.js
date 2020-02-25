@@ -75,8 +75,6 @@ export default class Board extends React.Component{
                 <div className="status">{status}</div>
 
                 {this.props.playersPos.map((player,index)=>{
-                    console.log('coming fram board this is value of player' +index)
-                    console.log(player)
                     let p = posToObj(player),
                         r = p.row,
                         c = p.col,

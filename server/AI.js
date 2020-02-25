@@ -4,7 +4,7 @@
 
     constructor(startNode, endNode){
         this.position=0;
-        this.walls =[]
+        this.walls =['e9h']
         this.board = new Board(this.walls)
         this.path = this.shortestPath(startNode,endNode)
         }
@@ -42,7 +42,6 @@
         var open = []
         var closed = []
         let a = this.board.position2Tile(startNode)
-        console.log(a)
         a.setFCost(startNode,endNode)
         open.push(a)
 
@@ -111,7 +110,6 @@
             // this.board.renderBoard()
             // console.log(open)
         }
-        console.log(false)
         return false
     }
 
@@ -141,41 +139,35 @@ class Board {
     }
     wallToBlockedWays(wallCoord){
         let rtn = []
-        console.log(wallCoord)
-        console.log(0)
         if(wallCoord[2]=='h' || wallCoord[2]=='H'){
             let tmp = wallCoord.slice(0,-1)
-            console.log(1)
             let x1 = tmp,
-                y1 = Tile.posPlusMoves(tmp, 0,+1),
+                y1 = Tile.posPlusMoves(tmp, 0,-1),
                 x2 = Tile.posPlusMoves(tmp, 1,0),
-                y2 = Tile.posPlusMoves(tmp, 1,+1)
-            rtn.push([x1,y1])
-            rtn.push([x2,y2])
-            console.log(rtn)
-
-        }else if (wallCoord[2]=='v'|| wallCoord[2]=='V') {
-            let tmp = wallCoord.slice(0,-1)
-            console.log(2)
-            let x1 = tmp,
-                y1 = Tile.posPlusMoves(tmp, 1,0),
-                x2 = Tile.posPlusMoves(tmp, 0,-1),
                 y2 = Tile.posPlusMoves(tmp, 1,-1)
             rtn.push([x1,y1])
             rtn.push([x2,y2])
-            console.log(rtn)
+            //console.log(rtn)
+
+        }else if (wallCoord[2]=='v'|| wallCoord[2]=='V') {
+            let tmp = wallCoord.slice(0,-1)
+            let x1 = tmp,
+                y1 = Tile.posPlusMoves(tmp, 1,0),
+                x2 = Tile.posPlusMoves(tmp, 0,+1),
+                y2 = Tile.posPlusMoves(tmp, 1,+1)
+            rtn.push([x1,y1])
+            rtn.push([x2,y2])
+            //console.log(rtn)
 
         }
-        console.log(3)
         let temp = this.blockedWays.concat(rtn)
         this.blockedWays = temp
     }
     createBoard(){
-        for(let x=1;x>=9;x++){
+        for(let x=1;x<=9;x++){
             for(let y=1;y<=9;y++){
                 var letter = String.fromCharCode(96 + y)
                 var coord = letter +x
-                console.log(coord)
                 this.Tiles.push(new Tile(coord))
             }
         }
@@ -206,21 +198,15 @@ class Board {
     }
     position2Tile(position){
         let num = this.position2Number(position)
-        console.log(this.Tiles)
         return this.Tiles[num]
     }
     position2Number(position){
-        console.log('-------------------------------')
-        console.log(position)
+        // console.log('-------------------------------')
+        // console.log(position)
         // return the number in the arr of a given position
         let x = position[0].charCodeAt(0) - 96
-        console.log(x)
         let y = Number(position[1])
-        console.log(y)
-        console.log('------------')
-        console.log(x+9*(y-1))
-
-        return (x+9*(y-1))
+        return ((x+9*(y-1))-1)
     }
     isMovePossible(current, next){
         var rtn = true
@@ -306,4 +292,4 @@ class Tile {
         }
 
 }
-// let ai = new AI('a1','e1')
+// let ai = new AI('e1','e9')

@@ -86,7 +86,6 @@ export default class AI {
                 //console.log(current)
                 let path = []
                 this.board.backtrackPath(current,path)
-                path.reverse()
                 console.log(`Path is ${path.length} move long`)
                 console.log(path)
                 return path
@@ -115,7 +114,6 @@ export default class AI {
 
             // console.log(open)
         }
-        console.log(false)
         return false
     }
     goTo(position){
@@ -137,7 +135,9 @@ export default class AI {
             this.board.addWall(enemyMove)
             //check the new best path to objective
             console.log('enemy just put wall at:'+enemyMove)
-            this.path = this.shortestPath('e9',this.position)
+            console.log(this.position)
+            this.path = this.shortestPath(this.position,'e9')
+            // console.log('new path by update:+'+this.path)
         }
         // If the enemy is simply moving then set the currPos to false
         // and the next one to tru
@@ -189,9 +189,9 @@ class Board {
         if(wallCoord[2]=='h' || wallCoord[2]=='H'){
             let tmp = wallCoord.slice(0,-1)
             let x1 = tmp,
-                y1 = Tile.posPlusMoves(tmp, 0,+1),
+                y1 = Tile.posPlusMoves(tmp, 0,-1),
                 x2 = Tile.posPlusMoves(tmp, 1,0),
-                y2 = Tile.posPlusMoves(tmp, 1,+1)
+                y2 = Tile.posPlusMoves(tmp, 1,-1)
             rtn.push([x1,y1])
             rtn.push([x2,y2])
 
@@ -200,11 +200,11 @@ class Board {
             console.log(2)
             let x1 = tmp,
                 y1 = Tile.posPlusMoves(tmp, 1,0),
-                x2 = Tile.posPlusMoves(tmp, 0,-1),
-                y2 = Tile.posPlusMoves(tmp, 1,-1)
+                x2 = Tile.posPlusMoves(tmp, 0,+1),
+                y2 = Tile.posPlusMoves(tmp, 1,+1)
             rtn.push([x1,y1])
             rtn.push([x2,y2])
-            console.log(rtn)
+            //console.log(rtn)
 
         }
         let temp = this.blockedWays.concat(rtn)
@@ -212,7 +212,7 @@ class Board {
     }
 
     createBoard(){
-        for(let x=9;x>=1;x--){
+        for(let x=1;x<=9;x++){
             for(let y=1;y<=9;y++){
                 var letter = String.fromCharCode(96 + y)
                 var coord = letter +x
@@ -230,11 +230,10 @@ class Board {
     }
     static position2Number(position){
         // console.log('----------p2N---------------------')
-        // console.log(position)
         // return the number in the arr of a given position
         let x = position[0].charCodeAt(0) - 96
         let y = Number(position[1])
-        return (x+9*(9-y))-1
+        return ((x+9*(y-1))-1)
     }
     isMovePossible(current, next){
         var rtn = true
@@ -249,11 +248,11 @@ class Board {
 
     }
     backtrackPath(tile,acc){
-        if(tile.previous == undefined || tile.previous== null){
+        if(tile.previous == undefined || tile.previous== null|| acc.includes(tile.position)){
             return acc;
         }
         let parrent = this.position2Tile(tile.previous)
-        acc.push(parrent.position)
+        acc.push(tile.position)
         this.backtrackPath(parrent,acc)
 
     }
@@ -275,9 +274,9 @@ class Tile {
             return true
         }
         setNeightbours() {
-            this.neightbours.up = Tile.posPlusMoves(this.position, 0, 1)
+            this.neightbours.up = Tile.posPlusMoves(this.position, 0, -1)
             if(this.neightbours.up == null) delete this.neightbours.up
-            this.neightbours.down = Tile.posPlusMoves(this.position, 0, -1)
+            this.neightbours.down = Tile.posPlusMoves(this.position, 0, 1)
             if(this.neightbours.down == null) delete this.neightbours.down
             this.neightbours.left = Tile.posPlusMoves(this.position, -1, 0)
             if(this.neightbours.left == null) delete this.neightbours.left

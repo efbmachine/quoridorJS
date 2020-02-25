@@ -73,7 +73,6 @@ export default class Game extends React.Component{
     }
     waitForMove =() =>{
         this.props.socket.on('move',(data)=>{
-            console.log(data.player1)
             if(data.player1){
                 let otherPlayer = this.state.playersPos[1]
                 let playersPos = []
