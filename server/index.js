@@ -8,7 +8,7 @@ const PORT  = 3001;
 let roomsJoinable = []
 let rooms =[]
 let players = []
-let AIS = []
+
 
 io.on('connection',(socket)=>{
     console.log('A new user connected: '+socket.id)
@@ -16,7 +16,6 @@ io.on('connection',(socket)=>{
             socket.emit('sendRooms',{rooms:roomsJoinable})
             console.log('sentRooms:' +roomsJoinable.map(map=> map.name))
     })
-
     socket.on('createRoom',(data)=>{
         let room = new Room(data.roomName)
         if(roomsJoinable.includes(room)){
@@ -26,7 +25,7 @@ io.on('connection',(socket)=>{
             socket.join(room.name)
             console.log(socket.id +' just joined room: '+data.roomName)
             // Create a player element and add it to the room
-            let player = new Player('e1',true)
+            let player = new Player('e9',true)
             room.addPlayer(player)
             players.push(player) // needs to be modified
             roomsJoinable.push(room)
@@ -34,6 +33,8 @@ io.on('connection',(socket)=>{
         }
     })
 
+
+    // this is obselite ?
     socket.on('createRoomAI',(data)=>{
         let room = new Room('AI'+AIS.length)
         socket.join(room.name)
@@ -59,7 +60,7 @@ io.on('connection',(socket)=>{
         //and put it in rooms
         roomsJoinable.map((room,index)=>{
             if(room.name==data.roomName){
-                let player = new Player('e9',false)
+                let player = new Player('e1',false)
                 room.addPlayer(player)
                 rooms.push(room)
                 roomsJoinable.splice(index,1)
@@ -72,7 +73,6 @@ io.on('connection',(socket)=>{
     })
 
     socket.on('getRoom',()=>{
-        console.log('user trying to get which room he\'s in')
         let roomName = Object.keys(socket.rooms)[1]
         let found = false;
         roomsJoinable.map(room=>{
@@ -128,6 +128,10 @@ io.on('connection',(socket)=>{
                         io.to(data.room).emit('placeWall',{position:data.position})
                         room.toogleTurn()
                         let turn = room.turn1? 'Black':'White'
+                        //Only for the AI to receive
+                        if(!room.turn1){
+                            io.to(data.room).emit('turn',{move:data.position})
+                        }
                         io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
                     }else {
                         socket.emit('message',{message:'You don\'t have anymore walls'})
@@ -152,9 +156,7 @@ io.on('connection',(socket)=>{
 
                     //TODO: Check if move is posible
                     var possible = true;
-                    console.log(room.blockedPaths)
                     room.blockedPaths.map(block=>{
-                        console.log(block)
                         if( (block[1]==oldPosition && block[0]==data.position)||
                             (block[0]==oldPosition && block[1]==data.position)){
                                 possible=false;
@@ -171,6 +173,11 @@ io.on('connection',(socket)=>{
                             room.players[1].changePosition(data.position)
                         }
                         let turn = room.turn1? 'Black':'White'
+                        //This one is only to be received by the AI
+                        if(!room.turn1){
+                            io.to(data.room).emit('turn',{move:data.position})
+                        }
+                        /////////////////////////////////////
                         io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
                     }else{
                         socket.emit('message',{message:'Move is not posible'})
@@ -182,7 +189,7 @@ io.on('connection',(socket)=>{
         })
     })
 
-    socket.on("disconnect", () => console.log("Client disconnected"));
+    //socket.on("disconnect", () => console.log("Client disconnected"));
 })
 http.listen(PORT, ()=>{
     console.log(`Server running on port:${PORT}`)

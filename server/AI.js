@@ -1,21 +1,14 @@
-const io = require('socket.io-client');
 
-module.exports = class AI {
+
+ class AI {
 
     constructor(startNode, endNode){
         this.position=0;
         this.walls =[]
-
-
-        this.socket = io('127.0.0.1:3001')
-        this.socket.on('wakeUp',(data)=>{
-
-            this.roomName = data.roomName
-            this.socket.emit(joinRoom,{roomName:this.roomName})
         this.board = new Board(this.walls)
         this.path = this.shortestPath(startNode,endNode)
-        })
-    }
+        }
+
     tileInArr(arr, tile){
         let rtn = [false]
         arr.forEach((item, i) => {
@@ -49,6 +42,7 @@ module.exports = class AI {
         var open = []
         var closed = []
         let a = this.board.position2Tile(startNode)
+        console.log(a)
         a.setFCost(startNode,endNode)
         open.push(a)
 
@@ -88,13 +82,9 @@ module.exports = class AI {
                 let path = []
                 this.board.backtrackPath(current,path)
                 path.reverse()
-                let rtn =[]
-                path.forEach((item) => {
-                    rtn.push(item.position)
-                });
-                console.log(`can be done in ${rtn.length} moves`)
-                console.log(rtn)
-                return rtn
+                console.log(`can be done in ${path.length} moves`)
+                console.log(path)
+                return path
             }
 
             //For each neightbour if not atteinable or in closed skip to next one
@@ -117,8 +107,8 @@ module.exports = class AI {
                 // console.log("nTile")
                 // console.log(nTile)
             }
-            console.log(`------------------${i}------------------------------------------`)
-            this.board.renderBoard()
+            // console.log(`------------------${i}------------------------------------------`)
+            // this.board.renderBoard()
             // console.log(open)
         }
         console.log(false)
@@ -181,10 +171,11 @@ class Board {
         this.blockedWays = temp
     }
     createBoard(){
-        for(let x=9;x>=1;x--){
+        for(let x=1;x>=9;x++){
             for(let y=1;y<=9;y++){
                 var letter = String.fromCharCode(96 + y)
                 var coord = letter +x
+                console.log(coord)
                 this.Tiles.push(new Tile(coord))
             }
         }
@@ -215,15 +206,21 @@ class Board {
     }
     position2Tile(position){
         let num = this.position2Number(position)
+        console.log(this.Tiles)
         return this.Tiles[num]
     }
     position2Number(position){
-        // console.log('-------------------------------')
-        // console.log(position)
+        console.log('-------------------------------')
+        console.log(position)
         // return the number in the arr of a given position
         let x = position[0].charCodeAt(0) - 96
+        console.log(x)
         let y = Number(position[1])
-        return (x+9*(9-y))-1
+        console.log(y)
+        console.log('------------')
+        console.log(x+9*(y-1))
+
+        return (x+9*(y-1))
     }
     isMovePossible(current, next){
         var rtn = true
@@ -238,11 +235,12 @@ class Board {
 
     }
     backtrackPath(tile,acc){
+
         if(tile.previous == undefined || tile.previous== null){
             return acc;
         }
         let parrent = this.position2Tile(tile.previous)
-        acc.push(parrent)
+        acc.push(tile.position)
         this.backtrackPath(parrent,acc)
 
     }
@@ -264,9 +262,9 @@ class Tile {
             return true
         }
         setNeightbours() {
-            this.neightbours.up = Tile.posPlusMoves(this.position, 0, 1)
+            this.neightbours.up = Tile.posPlusMoves(this.position, 0, -1)
             if(this.neightbours.up == null) delete this.neightbours.up
-            this.neightbours.down = Tile.posPlusMoves(this.position, 0, -1)
+            this.neightbours.down = Tile.posPlusMoves(this.position, 0, 1)
             if(this.neightbours.down == null) delete this.neightbours.down
             this.neightbours.left = Tile.posPlusMoves(this.position, -1, 0)
             if(this.neightbours.left == null) delete this.neightbours.left
@@ -308,3 +306,4 @@ class Tile {
         }
 
 }
+// let ai = new AI('a1','e1')
