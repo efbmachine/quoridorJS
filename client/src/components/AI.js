@@ -41,7 +41,7 @@ export default class AI {
                 return false
         });
     }
-    shortestPath(startNode, endNode'){
+    shortestPath(startNode, endNode){
         //get starting point neightbours
         // calculate all their f cost
         // pick the one with the lowest fCost

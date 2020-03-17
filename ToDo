@@ -1,8 +1,8 @@
--Status:
+-Status: Not Started
 Implement the login so that once you refresh
     the page you can login and get back in your game
 
--Status: In process
+-Status: Done
 Implement the fact that they gotta be a path to the
     opponents final line
 
@@ -12,10 +12,17 @@ Implement the AI
     -Status: in progress
     Connect AI to actual game
 
-    
--Status:
+
+-Status: Not Started
 Make it impossible to place walls at a1(hv), i1(hv), a9(v) & i9(v)
 
--Status:
+-Status: Not Started
 Make it impossible to have two walls overlap
     ex: a5h & b5h || a5v & a6v
+
+-Status: Not Started
+Two players can't be on the same spot
+Implement the jump function
+(if you have to go to the place where the
+opponent is you'll have to move +1 from
+one direction)

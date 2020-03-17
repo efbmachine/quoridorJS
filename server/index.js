@@ -123,16 +123,21 @@ io.on('connection',(socket)=>{
             if(room.name==data.room){
                 if(room.turn1==data.player1){
                     if(room.players[player].placeWall()){
-                        room.addWall(data.position)
-                        io.to(data.room).emit('wallNumber',{wallNumber:room.getPlayerWallNumber()})
-                        io.to(data.room).emit('placeWall',{position:data.position})
-                        room.toogleTurn()
-                        let turn = room.turn1? 'Black':'White'
-                        //Only for the AI to receive
-                        if(!room.turn1){
-                            io.to(data.room).emit('turn',{move:data.position})
+                        if(AI('e1','e9',room.walls.concat(data.position))==false){
+                            console.log('success')
+                            socket.emit('message',{message:'Wall blocking sole path'})
+                        }else{
+                            room.addWall(data.position)
+                            io.to(data.room).emit('wallNumber',{wallNumber:room.getPlayerWallNumber()})
+                            io.to(data.room).emit('placeWall',{position:data.position})
+                            room.toogleTurn()
+                            let turn = room.turn1? 'Black':'White'
+                            //Only for the AI to receive
+                            if(!room.turn1){
+                                io.to(data.room).emit('turn',{move:data.position})
+                            }
+                            io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
                         }
-                        io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
                     }else {
                         socket.emit('message',{message:'You don\'t have anymore walls'})
                     }

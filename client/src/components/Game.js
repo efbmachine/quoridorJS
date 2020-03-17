@@ -57,7 +57,7 @@ export default class Game extends React.Component{
             if(!this.state.walls.includes(data.position)){
                 this.setState({
                     walls: this.state.walls.concat([data.position])
-                })
+                })                
             }
             //this.state.walls.push(wall)
             // console.log('server said: ' + data.position)

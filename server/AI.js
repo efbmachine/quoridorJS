@@ -1,15 +1,9 @@
+const isThereAWay = (startNode, endNode,walls)=>{
+    let board = new Board(walls)
+    return shortestPath(startNode,endNode, board)
+    }
 
-
- class AI {
-
-    constructor(startNode, endNode){
-        this.position=0;
-        this.walls =['e3h']
-        this.board = new Board(this.walls)
-        this.path = this.shortestPath(startNode,endNode)
-        }
-
-    tileInArr(arr, tile){
+const tileInArr = (arr, tile) =>{
         let rtn = [false]
         arr.forEach((item, i) => {
             if(item.position == tile.position){
@@ -21,7 +15,7 @@
         })
         return rtn
     }
-    lowerFCost(arr, tile){
+const lowerFCost= (arr, tile)=>{
         let rtn;
         arr.forEach((item, i) => {
             if(item.position == tile.position && item.fCost > tile.fCost){
@@ -33,7 +27,7 @@
                 return false
         });
     }
-    shortestPath(startNode, endNode){
+const shortestPath=(startNode, endNode, board)=>{
         //get starting point neightbours
         // calculate all their f cost
         // pick the one with the lowest fCost
@@ -41,7 +35,7 @@
 
         var open = []
         var closed = []
-        let a = this.board.position2Tile(startNode)
+        let a = board.position2Tile(startNode)
         a.setFCost(startNode,endNode)
         open.push(a)
 
@@ -75,11 +69,11 @@
             // check if current is target
             if(current.position==endNode){
                 console.log('path has been found')
-                this.board.renderBoard()
+                board.renderBoard()
                 console.log(`found in ${i} tries`)
                 //console.log(current)
                 let path = []
-                this.board.backtrackPath(current,path)
+                board.backtrackPath(current,path)
                 path.reverse()
                 console.log(`can be done in ${path.length} moves`)
                 console.log(path)
@@ -89,17 +83,17 @@
             //For each neightbour if not atteinable or in closed skip to next one
             for(let item in current.neightbours){
                 let temp = current.neightbours[item]
-                let nTile = this.board.position2Tile(temp)
-                if(!this.board.isMovePossible(current.position,temp) || closed.includes(temp)){
+                let nTile = board.position2Tile(temp)
+                if(!board.isMovePossible(current.position,temp) || closed.includes(temp)){
                         continue
                     }
 
-                let tia = this.tileInArr(open,nTile)
+                let tia = tileInArr(open,nTile)
                 // console.log(!tia[0])
-                if(!tia[0] || this.lowerFCost(open,nTile)){
+                if(!tia[0] || lowerFCost(open,nTile)){
                     nTile.setFCost(startNode,endNode)
                     nTile.previous=current.position
-                    if(this.lowerFCost(open,nTile))
+                    if(lowerFCost(open,nTile))
                         {open.splice(tia[1],1)}
                     open.push(nTile)
                 }
@@ -114,7 +108,6 @@
     }
 
 
-}
 
 class Board {
     constructor(walls){
@@ -292,3 +285,4 @@ class Tile {
         }
 
 }
+module.exports = isThereAWay

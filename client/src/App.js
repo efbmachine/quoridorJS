@@ -64,7 +64,8 @@ class App extends React.Component {
             <div>
                 { this.state.gameStart?
                     <Game socket={this.socket}
-                            player1={this.state.player1}/> :
+                            player1={this.state.player1}
+                            ai={new AI('e1','e9')}/> :
                     <Index createGame={this.createGame}
                             createGamevsAi={this.createGamevsAi}
                             rooms={this.state.rooms}
