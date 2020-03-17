@@ -4,7 +4,7 @@
 
     constructor(startNode, endNode){
         this.position=0;
-        this.walls =['e9h']
+        this.walls =['e3h']
         this.board = new Board(this.walls)
         this.path = this.shortestPath(startNode,endNode)
         }
@@ -292,4 +292,3 @@ class Tile {
         }
 
 }
-// let ai = new AI('e1','e9')

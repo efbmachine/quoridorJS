@@ -41,12 +41,12 @@ export default class AI {
                 return false
         });
     }
-    shortestPath(startNode, endNode){
+    shortestPath(startNode, endNode'){
         //get starting point neightbours
         // calculate all their f cost
         // pick the one with the lowest fCost
         // if fCost are equal pick one with lowest hCost
-
+        console.log(startNode, endNode);
         var open = []
         var closed = []
         let a = this.board.position2Tile(startNode)
@@ -86,8 +86,13 @@ export default class AI {
                 //console.log(current)
                 let path = []
                 this.board.backtrackPath(current,path)
-                console.log(`Path is ${path.length} move long`)
-                console.log(path)
+                // console.log(`Path is ${path.length} move long`)
+                // console.log(path)
+                console.log('this is the new path: ' + path)
+                console.log('Ai is at'+ startNode);
+                var currentNode = path.indexOf(startNode)
+                if(currentNode!= -1)
+                    path.splice(currentNode)
                 return path
             }
 
@@ -117,10 +122,11 @@ export default class AI {
         return false
     }
     goTo(position){
-        this.position=position
+        this.position = position
         this.socket.emit('move',{player1:false,
                                     room:this.roomName,
                                     position:position})
+        console.log('Ai moved to:' + this.position)
 
 
     }
@@ -134,8 +140,7 @@ export default class AI {
             //add the new wall to the board
             this.board.addWall(enemyMove)
             //check the new best path to objective
-            console.log('enemy just put wall at:'+enemyMove)
-            console.log(this.position)
+            //console.log('Ai position: ' + this.position)
             this.path = this.shortestPath(this.position,'e9')
             // console.log('new path by update:+'+this.path)
         }
@@ -143,21 +148,21 @@ export default class AI {
         // and the next one to tru
         else{
             this.opponent = enemyMove
-
         }
 
 
 
     }
     play(){
-        let newPos = this.path.pop()
+        var newPos = this.path.pop()
         this.goTo(newPos)
         console.log('remaining path:'+ this.path)
+        console.log('-------------------------------------------')
     }
     waitTurn(){
-        console.log('AI is waiting for U')
+        // console.log('AI is waiting for U')
         this.socket.on('turn',(data)=>{
-            console.log('It is my turn xD')
+            // console.log('It is my turn xD')
             this.update(data.move)
             this.play()
 
@@ -256,8 +261,6 @@ class Board {
         this.backtrackPath(parrent,acc)
 
     }
-
-
 }
 class Tile {
         constructor(position){
