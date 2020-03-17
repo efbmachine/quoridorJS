@@ -124,14 +124,14 @@ io.on('connection',(socket)=>{
                 if(room.turn1==data.player1){
                     if(room.players[player].placeWall()){
                         console.log(data.position)
-                        if(['a1h','i1h','i1v','a9v','i9h','i9v'].includes(data.position)){
-                            socket.emit('message',{message:'You cannot place a wall here'})
-                        }else{
-                                if(AI('e1','e9',room.walls.concat(data.position))==false){
-                                    console.log('success')
-                                    socket.emit('message',{message:'Wall blocking sole path'})
+                            if(AI('e1','e9',room.walls.concat(data.position))==false){
+                                console.log('success')
+                                socket.emit('message',{message:'Wall blocking sole path'})
+                            }else{
+                                if(!room.addWall(data.position)){
+                                    socket.emit('message',{message:'You cannot place a all here'})
                                 }else{
-                                    room.addWall(data.position)
+                                    console.log('interuptin?')
                                     io.to(data.room).emit('wallNumber',{wallNumber:room.getPlayerWallNumber()})
                                     io.to(data.room).emit('placeWall',{position:data.position})
                                     room.toogleTurn()
@@ -143,6 +143,7 @@ io.on('connection',(socket)=>{
                                     io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
                                 }
                             }
+
                     }else {
                         socket.emit('message',{message:'You don\'t have anymore walls'})
                     }
@@ -214,6 +215,7 @@ class Room{
         this.walls = []
         this.blockedPaths = []
         this.turn1 = true
+        this.unplaceable = ['a1h','i1h','i1v','a9v','i9h','i9v']
     }
     getPlayerWallNumber(){
         let arr =[]
@@ -271,20 +273,28 @@ class Room{
         }
     }
     addWall(wall){
-        let path = this.blockedWays(wall)
-        console.log('the path: ',path)
-        this.blockedPaths.includes(path)
-        let temp =this.blockedPaths.concat(path)
+        var path = this.blockedWays(wall)
 
+        if(this.unplaceable.includes(wall)){
+            return false
+        }
+
+        let temp =this.blockedPaths.concat(path)
         this.walls.push(wall)
+        if(wall[2]=='h'){
+            this.unplaceable.push(posPlusMoves(wall,1,0))
+            this.unplaceable.push(posPlusMoves(wall,-1,0))
+        }
+        else{
+            this.unplaceable.push(posPlusMoves(wall,0,1))
+            this.unplaceable.push(posPlusMoves(wall,0,-1))
+        }
         this.blockedPaths = temp
-        console.log('here are all the forbidden moves: ',this.blockedPaths)
+        console.log(this.unplaceable)
+        return true
+
     }
-    // ---------------------- INCOMPLETE -------------------
-    openPath(brockedPaths){
-        // Function to check whether there is still a way toward the enemy line
-        // example:  f3h: f3-f2; g3-g2
-    }
+
 }
 
 class Player{
@@ -312,7 +322,19 @@ class Player{
 //         return true;
 //     })
 // }
-
+const posPlusMoves = (coord, x_offset, y_offset)=> {
+    let x = (coord[0].charCodeAt(0) - 96 + x_offset)
+    let y = (Number(coord[1]) + y_offset)
+    let z =  '' || coord[2]
+    let rtn = String.fromCharCode(96 + x)
+        rtn += y
+        rtn += z
+    // Check wether x or y is <1 && >9
+    if(x<1 || x>9 ||y<1 ||y>9){
+        return null
+    }
+    return rtn
+}
 const posToObj = (position)=>{
     let regex = /(\w)(\d)(\w?)/
     let positions = position.match(regex)

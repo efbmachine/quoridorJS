@@ -16,7 +16,7 @@ Implement the AI
 -Status: Done
 Make it impossible to place walls at a1(h), i1(hv), a9(v) & i9(hv)
 
--Status: In process
+-Status: Done
 Make it impossible to have two walls overlap
     ex: a5h & b5h || a5v & a6v
 

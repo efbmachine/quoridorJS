@@ -57,7 +57,7 @@ export default class Game extends React.Component{
             if(!this.state.walls.includes(data.position)){
                 this.setState({
                     walls: this.state.walls.concat([data.position])
-                })                
+                })
             }
             //this.state.walls.push(wall)
             // console.log('server said: ' + data.position)
@@ -107,11 +107,11 @@ export default class Game extends React.Component{
             case 'up':
                 temp = posToObj(position)
                 temp.col-=1
-                console.log('value of temp')
-                console.log(temp)
-                console.log('value of newPosition')
+                // console.log('value of temp')
+                // console.log(temp)
+                // console.log('value of newPosition')
                 newPosition = objToPos(temp)
-                console.log(newPosition)
+                // console.log(newPosition)
                 this.props.socket.emit('move',{player1:player1,
                                         room:room,
                                         position:newPosition})
