@@ -7,10 +7,10 @@ export default class AI {
     ///             WORKING ONLY ON STRAIGHT LINE RIGHT NOW
     ///
 
-    constructor(startNode, endNode,roomName){
+    constructor(startNode, endNode,roomName,url){
         this.position=startNode;
         this.walls =[]
-        this.socket = io('127.0.0.1:3001')
+        this.socket = io(url)
         this.roomName = roomName
         this.socket.emit('joinRoom',{roomName:this.roomName})
         this.board = new Board(this.walls)
