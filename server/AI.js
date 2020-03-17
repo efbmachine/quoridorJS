@@ -68,15 +68,15 @@ const shortestPath=(startNode, endNode, board)=>{
             closed.push(current.position)
             // check if current is target
             if(current.position==endNode){
-                console.log('path has been found')
+                //console.log('path has been found')
                 board.renderBoard()
-                console.log(`found in ${i} tries`)
+                //console.log(`found in ${i} tries`)
                 //console.log(current)
                 let path = []
                 board.backtrackPath(current,path)
                 path.reverse()
-                console.log(`can be done in ${path.length} moves`)
-                console.log(path)
+                //console.log(`can be done in ${path.length} moves`)
+                //console.log(path)
                 return path
             }
 

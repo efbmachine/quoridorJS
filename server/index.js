@@ -123,21 +123,26 @@ io.on('connection',(socket)=>{
             if(room.name==data.room){
                 if(room.turn1==data.player1){
                     if(room.players[player].placeWall()){
-                        if(AI('e1','e9',room.walls.concat(data.position))==false){
-                            console.log('success')
-                            socket.emit('message',{message:'Wall blocking sole path'})
+                        console.log(data.position)
+                        if(['a1h','i1h','i1v','a9v','i9h','i9v'].includes(data.position)){
+                            socket.emit('message',{message:'You cannot place a wall here'})
                         }else{
-                            room.addWall(data.position)
-                            io.to(data.room).emit('wallNumber',{wallNumber:room.getPlayerWallNumber()})
-                            io.to(data.room).emit('placeWall',{position:data.position})
-                            room.toogleTurn()
-                            let turn = room.turn1? 'Black':'White'
-                            //Only for the AI to receive
-                            if(!room.turn1){
-                                io.to(data.room).emit('turn',{move:data.position})
+                                if(AI('e1','e9',room.walls.concat(data.position))==false){
+                                    console.log('success')
+                                    socket.emit('message',{message:'Wall blocking sole path'})
+                                }else{
+                                    room.addWall(data.position)
+                                    io.to(data.room).emit('wallNumber',{wallNumber:room.getPlayerWallNumber()})
+                                    io.to(data.room).emit('placeWall',{position:data.position})
+                                    room.toogleTurn()
+                                    let turn = room.turn1? 'Black':'White'
+                                    //Only for the AI to receive
+                                    if(!room.turn1){
+                                        io.to(data.room).emit('turn',{move:data.position})
+                                    }
+                                    io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
+                                }
                             }
-                            io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
-                        }
                     }else {
                         socket.emit('message',{message:'You don\'t have anymore walls'})
                     }
@@ -266,11 +271,14 @@ class Room{
         }
     }
     addWall(wall){
-            this.walls.push(wall)
-            let path = this.blockedWays(wall)
-            let temp =this.blockedPaths.concat(path)
-            this.blockedPaths = temp
-            console.log('here are all the forbidden moves: '+this.blockedPaths)
+        let path = this.blockedWays(wall)
+        console.log('the path: ',path)
+        this.blockedPaths.includes(path)
+        let temp =this.blockedPaths.concat(path)
+
+        this.walls.push(wall)
+        this.blockedPaths = temp
+        console.log('here are all the forbidden moves: ',this.blockedPaths)
     }
     // ---------------------- INCOMPLETE -------------------
     openPath(brockedPaths){
