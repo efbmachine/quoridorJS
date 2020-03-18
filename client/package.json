@@ -18,6 +18,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "author": "Keiffer Messan",
+  "license": "ISC",
   "eslintConfig": {
     "extends": "react-app"
   },

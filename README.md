@@ -11,4 +11,7 @@ You can also built walls in order to prevent your oppenent from reaching their g
 ![](figure2.png)       
 
 
-Here is the link to play the game: https://efbmachine.github.io/quoridor_client.js                   
+Here is the link to play the game: https://efbmachine.github.io/quoridor_client.js         
+
+I hope you enjoy it.   
+            -Keiffer
