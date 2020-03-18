@@ -1,15 +1,18 @@
-var http = require('http').createServer(require('./app.js'));
-var io = require('socket.io')(http);
+const server = require('http').Server(require('./app.js'));
+const io = require('socket.io')(server);
 var AI = require('./AI.js');
 
 
-const PORT  = 3001;
+const PORT  = process.env.PORT || 3001;
 
 let roomsJoinable = []
 let rooms =[]
 let players = []
 
 
+server.listen(PORT, ()=>{
+    console.log(`Server running on port:${PORT}`)
+})
 io.on('connection',(socket)=>{
     console.log('A new user connected: '+socket.id)
     socket.on('getRooms',(data)=>{
@@ -201,9 +204,6 @@ io.on('connection',(socket)=>{
     })
 
     //socket.on("disconnect", () => console.log("Client disconnected"));
-})
-http.listen(PORT, ()=>{
-    console.log(`Server running on port:${PORT}`)
 })
 
 // Class definition
