@@ -32,6 +32,10 @@ On the main page of the client you have three options:
 
 The server was built using socket.io and express. It allows a smooth communication between the users.
 Let me briefly explain how it work when you play against someone else.
+    ex: When you click on "Create a Room"
+    - client --(ask to create room)-->  server (creates room and place user in room)
+    - (add the second user to the room) server <--[join a room]-- other client 
+    - client --[makes move] --> server[check if move valid] -(send move)-> other client
 
 I hope you enjoy it.   
             -Keiffer
