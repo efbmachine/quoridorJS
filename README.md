@@ -8,4 +8,7 @@ The rules of the game are pretty straight forward. It is a turn based game playe
 
 You can also built walls in order to prevent your oppenent from reaching their goal. To do so click on one of the tiles.
 
-![](figure2.png)                              
+![](figure2.png)       
+
+
+Here is the link to play the game: https://efbmachine.github.io/quoridor_client.js                   
