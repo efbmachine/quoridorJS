@@ -7,7 +7,7 @@ export default class AI {
     ///             WORKING ONLY ON STRAIGHT LINE RIGHT NOW
     ///
 
-    constructor(startNode, endNode,roomName,url){
+    constructor(startNode,roomName,url){
         this.position=startNode;
         this.walls =[]
         this.socket = io(url)

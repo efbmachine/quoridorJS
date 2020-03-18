@@ -6,14 +6,15 @@ import './css/App.css';
 import Index from './components/Index';
 import AI from './components/AI.js'
 import Game from './components/Game';
-const URL = 'https://quoridor-server-7610.herokuapp.com/'// 'localhost:'//
-const PORT = 25917//3001
+const URL = 'localhost:'// 'https://quoridor-server-7610.herokuapp.com/'
+const PORT = 3001
 class App extends React.Component {
     constructor(props){
         super(props)
-        this.socket = io(URL)
+        this.socket = io(URL+PORT)
         this.state= {
             gameStart: false,
+            //gameOver:false,
             rooms:[],
             player1:null,
         }
@@ -49,7 +50,7 @@ class App extends React.Component {
     createGamevsAi =(roomName) =>{
         this.socket.emit('createRoom',{roomName:roomName})
         //create AI
-        var ai = new AI('e1','e9',roomName,URL)
+        var ai = new AI('e1',roomName,URL+PORT)
         ai.waitTurn()
 
 
@@ -59,6 +60,16 @@ class App extends React.Component {
 
         //wait for player
         //start the game
+    }
+    isGameOver =()=>{
+        this.socket.on('winner',(data)=>{
+            if(data.message==this.state.player1){
+                alert("You Won")
+            }else{
+                alert("You Lost")
+            }
+            this.setState({gameStart:false})
+        })
     }
     render(){
         return (

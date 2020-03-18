@@ -16,19 +16,11 @@ export default class Board extends React.Component{
         //Sets wall position, is it horizontal or vertical
         if(dir != null && dir.toUpperCase()==='V'){
             position += dir
-            // socket.emit('placeWall?',{position:position})
-            // socket.on('placeWall',(data)=>{
-            //     walls.push(data.position)
-            //     this.setState({walls:walls})
-            // })
+
         }
         else if(dir != null && dir.toUpperCase()==='H'){
             position += dir
-            // socket.emit('placeWall?',{position:position})
-            // socket.on('placeWall',(data)=>{
-            //     walls.push(data.position)
-            //     this.setState({walls:walls})
-            // })
+
 
         }
         else {
@@ -124,55 +116,3 @@ export default class Board extends React.Component{
         );
     }
 }
-/*
-    constructor(props){
-        super(props)
-        this.state = {
-            walls: props.walls
-        }
-    }
-    componentDidMount() {
-        this.createBoard();
-        this.displayWalls();
-    }
-    createBoard() {
-        const ctx = this.refs.game.getContext('2d');
-        ctx.fillStyle = 'orange'
-        for (let i =0 ; i<9 ;i++){
-            for(let j=0; j <9;j++){
-                //working version of displaying board:
-                //             ctx.fillRect(j*54+(j*11.4),i*54+(i*11.4),50,50)
-                ctx.fillRect(
-                    (11.4)+(54*j)+(11.4*j),
-                    (11.4)+(54*i)+(11.4*i),
-                    54,54)
-            }
-        }
-    }
-
-    displayWalls(){
-        if(this.state.walls != []){
-            console.log(this.state.walls)
-            this.props.walls.forEach((data)=>{
-                let wall = new Wall(data)
-                wall.display(this.refs.game)
-            })
-        }
-    }
-
-    render(){
-        //    board.push(<div className="row">{squareRows}</div>)
-        return(
-            <div className='container'>
-                <div className=''>
-                    <canvas ref='game' width={this.props.width} height={this.props.height}
-                        style={{border: '1px solid black'}}>
-
-                    </canvas>
-
-                </div>
-            </div>
-
-        );
-    }
-}; */

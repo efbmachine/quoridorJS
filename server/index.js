@@ -7,7 +7,7 @@ const PORT  = process.env.PORT || 3001;
 
 let roomsJoinable = []
 let rooms =[]
-let players = []
+var players = []
 
 
 server.listen(PORT, ()=>{
@@ -34,24 +34,6 @@ io.on('connection',(socket)=>{
             roomsJoinable.push(room)
             console.log(room.name +' was added to roomsJoinable')
         }
-    })
-
-
-    // this is obselite ?
-    socket.on('createRoomAI',(data)=>{
-        let room = new Room('AI'+AIS.length)
-        socket.join(room.name)
-        console.log(socket.id +' just joined room: '+room.name)
-        // Create a player element and add it to the room
-        let player = new Player('e1',true)
-        room.addPlayer(player)
-        players.push(player) // needs to be modified
-        //CREATE THE AI OVER HERE
-        let ai = new AI('e9','e1')
-        AIS.push(ai)
-        socket.emit('wakeUp',{roomName:room.name})
-        console.log(room.name +' was added to ai list')
-
     })
 
     socket.on('joinRoom',(data)=>{
@@ -179,13 +161,27 @@ io.on('connection',(socket)=>{
                     if(possible){
                         io.to(data.room).emit('move',{player1:data.player1,
                                                         position:data.position})
-                        room.toogleTurn()
+
                         //changes player position in the room
-                        if(data.player1){
+                        if(room.turn1){
                             room.players[0].changePosition(data.position)
                         }else{
                             room.players[1].changePosition(data.position)
                         }
+
+
+                        //
+                        //
+                        ///  Trying to implement the winning screen
+                        //
+                        //
+                        if(data.position[0]==1 || data.position[1]==9){
+                            console.log('gameOver',room.turn1+' won')
+                            io.to(data.room).emit('winner',{message:room.turn1})
+                            socket.emit('disconnect')
+                        }
+                        console.log('players:',room.players)
+                        room.toogleTurn()
                         let turn = room.turn1? 'Black':'White'
                         //This one is only to be received by the AI
                         if(!room.turn1){
