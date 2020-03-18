@@ -14,7 +14,7 @@ export default class AI {
         this.roomName = roomName
         this.socket.emit('joinRoom',{roomName:this.roomName})
         this.board = new Board(this.walls)
-        this.path = this.shortestPath(startNode,endNode)
+        this.path = this.shortestPath(startNode)
 
     }
     tileInArr(arr, tile){
@@ -41,11 +41,13 @@ export default class AI {
                 return false
         });
     }
-    shortestPath(startNode, endNode){
+    shortestPath(startNode){
         //get starting point neightbours
         // calculate all their f cost
         // pick the one with the lowest fCost
         // if fCost are equal pick one with lowest hCost
+        let endNode = ''
+        endNode += startNode[0]+'9'
         console.log(startNode, endNode);
         var open = []
         var closed = []
@@ -141,7 +143,7 @@ export default class AI {
             this.board.addWall(enemyMove)
             //check the new best path to objective
             //console.log('Ai position: ' + this.position)
-            this.path = this.shortestPath(this.position,'e9')
+
             // console.log('new path by update:+'+this.path)
         }
         // If the enemy is simply moving then set the currPos to false
@@ -149,9 +151,7 @@ export default class AI {
         else{
             this.opponent = enemyMove
         }
-
-
-
+        this.path = this.shortestPath(this.position)
     }
     play(){
         var newPos = this.path.pop()
