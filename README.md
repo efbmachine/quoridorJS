@@ -23,10 +23,15 @@ On the main page of the client you have three options:
 
 ![](figure3.png)
 
+
+
+
+
+
 # Server
 
 The server was built using socket.io and express. It allows a smooth communication between the users.
-Let me briefly explain how it work when you play against someone else. 
+Let me briefly explain how it work when you play against someone else.
 
 I hope you enjoy it.   
             -Keiffer
