@@ -1,9 +1,9 @@
-const isThereAWay = (startNode, endNode,walls)=>{
+ const isThereAWay = (startNode, endNode,walls)=>{
     let board = new Board(walls)
     return shortestPath(startNode,endNode, board)
     }
 
-const tileInArr = (arr, tile) =>{
+ const tileInArr = (arr, tile) =>{
         let rtn = [false]
         arr.forEach((item, i) => {
             if(item.position == tile.position){
@@ -15,7 +15,8 @@ const tileInArr = (arr, tile) =>{
         })
         return rtn
     }
-const lowerFCost= (arr, tile)=>{
+
+ const lowerFCost= (arr, tile)=>{
         let rtn;
         arr.forEach((item, i) => {
             if(item.position == tile.position && item.fCost > tile.fCost){
@@ -27,7 +28,8 @@ const lowerFCost= (arr, tile)=>{
                 return false
         });
     }
-const shortestPath=(startNode, endNode, board)=>{
+
+ const shortestPath=(startNode, endNode, board)=>{
         //get starting point neightbours
         // calculate all their f cost
         // pick the one with the lowest fCost
@@ -107,9 +109,7 @@ const shortestPath=(startNode, endNode, board)=>{
         return false
     }
 
-
-
-class Board {
+ class Board {
     constructor(walls){
         this.Tiles = []
         this.walls = walls
@@ -226,6 +226,7 @@ class Board {
 
 
 }
+
 class Tile {
         constructor(position){
             this.position = position
@@ -285,4 +286,6 @@ class Tile {
         }
 
 }
-module.exports = isThereAWay
+
+exports.isThereAWay = isThereAWay
+exports.Tile = Tile

@@ -1,6 +1,8 @@
+const ai = require('./AI.js');
+
 const server = require('http').Server(require('./app.js'));
 const io = require('socket.io')(server);
-var AI = require('./AI.js');
+
 
 
 const PORT  = process.env.PORT || 3001;
@@ -109,7 +111,7 @@ io.on('connection',(socket)=>{
                 if(room.turn1==data.player1){
                     if(room.players[player].placeWall()){
                         console.log(data.position)
-                            if(AI('e1','e9',room.walls.concat(data.position))==false){
+                            if(ai.isThereAWay('e1','e9',room.walls.concat(data.position))==false){
                                 console.log('success')
                                 socket.emit('message',{message:'Wall blocking sole path'})
                             }else{
@@ -145,28 +147,52 @@ io.on('connection',(socket)=>{
             if(room.name==data.room){
                 // console.log('room.turn1='+room.turn1)
                 // console.log('data.player1='+data.player1)
+
                 if(room.turn1==data.player1){
+
                     var oldPosition = data.player1? room.players[0].position
                                                     :room.players[1].position
-                    console.log(`${player}(${data.room}):${oldPosition}-->${data.position}`)
+                    var newPosition = data.position
 
-                    //TODO: Check if move is posible
+                    var enemyPosition = !data.player1? room.players[0].position
+                                                    :room.players[1].position
+
+                    // console.log(room.players);
+                    console.log(`${player}(${data.room}):${oldPosition}-->${newPosition}`)
+                    // console.log('--------------------------------------------------------------');
+
+                    //TODO: Check if move is possible
                     var possible = true;
-                    room.blockedPaths.map(block=>{
-                        if( (block[1]==oldPosition && block[0]==data.position)||
-                            (block[0]==oldPosition && block[1]==data.position)){
-                                possible=false;
-                            }
-                    })
+                    // console.log(newPosition,enemyPosition)
+                    if(newPosition == enemyPosition){
+                        console.log('overlap detected');
+                        let vectorX = (newPosition[0].charCodeAt(0) - 96) - (oldPosition[0].charCodeAt(0) - 96)
+                        let vectorY = Number(newPosition[1]) - Number(oldPosition[1])
+                        oldPosition = enemyPosition
+                        newPosition = ai.Tile.posPlusMoves(oldPosition,vectorX,vectorY)
+                    }
+
+                    if(newPosition==null||newPosition[0]<'a' || newPosition[0]>'i'||
+                        newPosition[1]<1 || newPosition.slice(-2)>9){
+                            possible = false
+                    }
+                    else{
+                        room.blockedPaths.map(block=>{
+                            if( (block[1]==oldPosition && block[0]==newPosition)||
+                                (block[0]==oldPosition && block[1]==newPosition)){
+                                    possible=false;
+                                }
+                        })
+                    }
                     if(possible){
                         io.to(data.room).emit('move',{player1:data.player1,
-                                                        position:data.position})
+                                                        position:newPosition})
 
                         //changes player position in the room
                         if(room.turn1){
-                            room.players[0].changePosition(data.position)
+                            room.players[0].changePosition(newPosition)
                         }else{
-                            room.players[1].changePosition(data.position)
+                            room.players[1].changePosition(newPosition)
                         }
 
 
@@ -180,12 +206,12 @@ io.on('connection',(socket)=>{
                             io.to(data.room).emit('winner',{message:room.turn1})
                             socket.emit('disconnect')
                         }
-                        console.log('players:',room.players)
+                        //console.log('players:',room.players)
                         room.toogleTurn()
                         let turn = room.turn1? 'Black':'White'
                         //This one is only to be received by the AI
                         if(!room.turn1){
-                            io.to(data.room).emit('turn',{move:data.position})
+                            io.to(data.room).emit('turn',{move:newPosition})
                         }
                         /////////////////////////////////////
                         io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
