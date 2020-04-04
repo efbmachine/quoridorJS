@@ -18,12 +18,23 @@ class App extends React.Component {
             rooms:[],
             player1:null,
         }
+        this.isGameOver()
     }
 
     componentDidMount(){
         this.getRooms()
     }
 
+    isGameOver (){
+        this.socket.on('winner',(data)=>{
+            if(data.message==this.state.player1){
+                if(!alert('Congrats, you WON!')){window.location.reload();}
+            }else{
+                if(!alert('Sorry, you LOST!')){window.location.reload();}
+            }
+            this.setState({gameStart:false})
+        })
+    }
     getRooms = ()=>{
         this.socket.emit('getRooms');
         this.socket.on('sendRooms',(data)=>{
@@ -61,16 +72,7 @@ class App extends React.Component {
         //wait for player
         //start the game
     }
-    isGameOver =()=>{
-        this.socket.on('winner',(data)=>{
-            if(data.message==this.state.player1){
-                alert("You Won")
-            }else{
-                alert("You Lost")
-            }
-            this.setState({gameStart:false})
-        })
-    }
+
     render(){
         return (
             <div>

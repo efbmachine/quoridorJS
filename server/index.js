@@ -148,7 +148,7 @@ io.on('connection',(socket)=>{
                 // console.log('room.turn1='+room.turn1)
                 // console.log('data.player1='+data.player1)
 
-                if(room.turn1==data.player1){
+                if(room.turn1==data.player1 && room.game != false ){
 
                     var oldPosition = data.player1? room.players[0].position
                                                     :room.players[1].position
@@ -201,9 +201,12 @@ io.on('connection',(socket)=>{
                         ///  Trying to implement the winning screen
                         //
                         //
-                        if(data.position[0]==1 || data.position[1]==9){
+                        if(data.position[0]==9 || data.position[1]==1){
                             console.log('gameOver',room.turn1+' won')
+                            let msg = `${player} player is the winner !!!`
                             io.to(data.room).emit('winner',{message:room.turn1})
+                            io.to(data.room).emit('message',{message:msg})
+                            room.game = false
                             socket.emit('disconnect')
                         }
                         //console.log('players:',room.players)
@@ -214,7 +217,8 @@ io.on('connection',(socket)=>{
                             io.to(data.room).emit('turn',{move:newPosition})
                         }
                         /////////////////////////////////////
-                        io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
+                        if(room.game != false)
+                            io.to(data.room).emit('message',{message:`It is now ${turn}'s turn`})
                     }else{
                         socket.emit('message',{message:'Move is not posible'})
                     }
