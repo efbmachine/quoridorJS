@@ -201,8 +201,11 @@ io.on('connection',(socket)=>{
                         ///  Trying to implement the winning screen
                         //
                         //
-                        if(data.position[0]==9 || data.position[1]==1){
+                        console.log(data.position)
+                        if((room.turn1 && data.position[1]==1) || (!room.turn1 &&data.position[1]==9)){
                             console.log('gameOver',room.turn1+' won')
+
+
                             let msg = `${player} player is the winner !!!`
                             io.to(data.room).emit('winner',{message:room.turn1})
                             io.to(data.room).emit('message',{message:msg})

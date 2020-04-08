@@ -6,12 +6,12 @@ import './css/App.css';
 import Index from './components/Index';
 import AI from './components/AI.js'
 import Game from './components/Game';
-const URL = 'localhost:'// 'https://quoridor-server-7610.herokuapp.com/'
+const URL = 'https://quoridor-server-7610.herokuapp.com/'
 const PORT = 3001
 class App extends React.Component {
     constructor(props){
         super(props)
-        this.socket = io(URL+PORT)
+        this.socket = io(URL)
         this.state= {
             gameStart: false,
             //gameOver:false,
@@ -61,7 +61,7 @@ class App extends React.Component {
     createGamevsAi =(roomName) =>{
         this.socket.emit('createRoom',{roomName:roomName})
         //create AI
-        var ai = new AI('e1',roomName,URL+PORT)
+        var ai = new AI('e1',roomName,URL)
         ai.waitTurn()
 
 
