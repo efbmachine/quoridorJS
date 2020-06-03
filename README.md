@@ -11,7 +11,6 @@ You can also built walls in order to prevent your oppenent from reaching their g
 ![](figure2.png)       
 
 
-Here is the link to play the game: https://efbmachine.github.io/quoridor_client.js.
 
 # Client
 
@@ -24,7 +23,7 @@ On the main page of the client you have three options:
 ![](figure3.png)
 
 
-
+# Here is the link to play the game: https://efbmachine.github.io/quoridor_client.js.
 
 
 
@@ -32,12 +31,19 @@ On the main page of the client you have three options:
 
 The server was built using socket.io and express. It allows a smooth communication between the users.
 Let me explain how it work in a brief and simplified case.
-When you play against someone else.
-    ex:you click on "Create a Room"
-    - client --(ask to create room)-->  server (creates room and place user in room)
-    - (add the second user to the room) server <--[join a room]-- other client
-    - client --(makes move) -->  server(check if move valid) -(send move)-> other client
-    -                           <--()-- server --()-->
+    
+   1 - user1 --(ask to create room)-->  server (creates room and place user in room)
+    
+   2 - user2 --(ask to join room 'xxxxx')--> server (adds user2 in room 'xxxxx' if not already 2 people)
+    
+   3 - user1  --(makes move) -->  server(check if move valid) --(send move)--> user2
+    
+   4 - user1  --(makes move) -->  server(check if move valid) --(send move)--> user2
+    
+and steps 3 & 4 keep repeating themselves until one of the users actually wins.                          
 
-I hope you enjoy it.   
-            -Keiffer
+
+
+
+Hope you enjoy the game even if the inteface is not great.
+    -Keiffer
