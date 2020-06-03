@@ -40,8 +40,12 @@ Let me explain how it work in a brief and simplified case.
     
    4 - user1  --(makes move) -->  server(check if move valid) --(send move)--> user2
     
-and steps 3 & 4 keep repeating themselves until one of the users actually wins.                          
+and steps 3 & 4 keep repeating themselves until one of the users actually wins.        
 
+
+# AI
+
+I programmed the AI myself using A* algorithm for pathfinding. This AI is driven to go toward the objective without ever placing any walls, it is racing to the win and if you do not be careful it will get there first.
 
 
 
