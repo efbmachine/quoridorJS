@@ -6,7 +6,7 @@ import './css/App.css';
 import Index from './components/Index';
 import AI from './components/AI.js'
 import Game from './components/Game';
-const URL = 'https://quoridor-server-7610.herokuapp.com/'
+const URL = 'https://85.90.246.26/'
 const PORT = 3001
 class App extends React.Component {
     constructor(props){
