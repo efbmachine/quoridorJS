@@ -11,6 +11,8 @@ You can also built walls in order to prevent your oppenent from reaching their g
 ![](figure2.png)       
 
 
+# The app is currently not online.
+
 
 # Client
 
@@ -21,10 +23,6 @@ I also used Socket.io so we could say this app is event driven. The basis behind
 On the main page of the client you have three options:
 
 ![](figure3.png)
-
-
-# Here is the link to play the game: https://efbmachine.github.io/quoridor_client.js.
-
 
 
 # Server
@@ -38,7 +36,7 @@ Let me explain how it work in a brief and simplified case.
     
    3 - user1  --(makes move) -->  server(check if move valid) --(send move)--> user2
     
-   4 - user1  --(makes move) -->  server(check if move valid) --(send move)--> user2
+   4 - user2  --(makes move) -->  server(check if move valid) --(send move)--> user1
     
 and steps 3 & 4 keep repeating themselves until one of the users actually wins.        
 
